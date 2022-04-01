@@ -1,5 +1,8 @@
-export type Offers = {
-  offer: Offer[]
+export type Cities = City[]
+
+export type City = {
+  city:string,
+  offers: Offer[]
 }
 
 export type Offer = {

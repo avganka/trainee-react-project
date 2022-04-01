@@ -1,35 +1,36 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AppRoutes, AuthStatus } from '../../types/const';
+import { AppRoutes, AuthStatus } from '../../const';
 
 import Main from '../main/main';
-// import MainEmpty from '../main-empty/main-empty';
 import Favorites from '../favorites/favorites';
-// import FavoritesEmpty from '../favorites-empty/favorites-empty';
 import Login from '../login/login';
-import Room from '../room/room';
-// import RoomNotLogged from '../room-not-logged/room-not-logged';
 import PageNotFound from '../page-not-found/page-not-found';
 import PrivateRoute from '../private-route/private-route';
+import { Cities } from '../../types/offers';
+import { ReviewsMocks } from '../../types/reviews';
+import OfferDetailed from '../offer-detailed/offer-detailed';
 
 type PlacesCountProp = {
   placesCount:number
+  offers: Cities;
+  reviews: ReviewsMocks;
 }
 
-function App({placesCount}:PlacesCountProp): JSX.Element {
+function App({placesCount, offers, reviews}:PlacesCountProp): JSX.Element {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path={AppRoutes.Main} element={<Main placesCount={placesCount}/>}/>
+        <Route path={AppRoutes.Main} element={<Main placesCount={placesCount} offers={offers}/>}/>
         <Route path={AppRoutes.Login} element={<Login/>}/>
         <Route path={AppRoutes.Favorites} element={
           <PrivateRoute
-            authStatus={AuthStatus.NoAuth}
+            authStatus={AuthStatus.Auth}
           >
-            <Favorites/>
+            <Favorites offers={offers}/>
           </PrivateRoute>
         }
         />
-        <Route path={AppRoutes.Room} element={<Room/>}/>
+        <Route path={`${AppRoutes.Room}/:id`} element={<OfferDetailed offers={offers[0]} reviews={reviews[0]}/>}/>
         <Route path='*' element={<PageNotFound/>}/>
       </Routes>
     </BrowserRouter>

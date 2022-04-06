@@ -1,20 +1,26 @@
 import { useParams} from 'react-router-dom';
-import { City } from '../../types/offers';
+import { Offer } from '../../types/offers';
 import { Reviews } from '../../types/reviews';
 import ReviewForm from '../form-review/form-review';
 import Logo from '../logo/logo';
+import PageNotFound from '../page-not-found/page-not-found';
 
 type OfferDetailedProps = {
-  offers: City,
+  offers: Offer[],
   reviews: Reviews,
 }
 
-export default function OfferDetailed(props:OfferDetailedProps):JSX.Element {
 
+export default function OfferDetailed({offers, reviews}:OfferDetailedProps):JSX.Element {
+  const id = useParams().id;
 
-  const {offers, reviews} = props;
-  const id = Number(useParams().id);
-  const {name, price, photos, rating, description, details, facilities, host} = offers.offers[id-1];
+  const currentOffer = offers.find((offer) => offer.id === id);
+
+  if (!currentOffer) {
+    return <PageNotFound/>;
+  }
+
+  const {name, price, photos, rating, description, details, facilities, host} = currentOffer;
 
   return (
     <>

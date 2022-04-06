@@ -1,12 +1,6 @@
-export type Cities = City[]
-
-export type City = {
-  city:string,
-  offers: Offer[]
-}
-
 export type Offer = {
-  id: number,
+  id: string,
+  city: string,
   name: string,
   price: number,
   rating: number,

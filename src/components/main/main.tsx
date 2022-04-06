@@ -1,15 +1,50 @@
+import { Dispatch, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AppRoutes } from '../../const';
-import { Cities } from '../../types/offers';
+import { City } from '../../types/cities';
+import { Offer } from '../../types/offers';
 import Logo from '../logo/logo';
 import OffersList from '../offers-list/offers-list';
+import Map from '../map/map';
+import { connect, ConnectedProps } from 'react-redux';
+import { Actions } from '../../types/action';
+import { State } from '../../types/state';
+import { changeCity, createOffersList } from '../../store/actions';
+import { CitiesList } from '../citiesList/citiesList';
 
-type PlacesCountProp = {
+type MainPageProps = {
   placesCount:number
-  offers: Cities
+  cities: City[],
+  offers: Offer[]
 }
 
-export default function Main({placesCount, offers}:PlacesCountProp): JSX.Element {
+const mapStateToProps = ({city, offers}: State) => ({
+  city,
+  offers,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch<Actions>) => ({
+  onCityClick(city: City) {
+    dispatch(changeCity(city));
+    dispatch(createOffersList());
+  },
+});
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+type ConnectedComponentProps = PropsFromRedux & MainPageProps;
+
+
+function Main({placesCount, cities, offers, onCityClick, city}: ConnectedComponentProps): JSX.Element {
+  const [activeCard, setActiveCard] = useState('');
+
+  const onListItemHover = (activeOffer:string) => {
+    setActiveCard(activeOffer);
+  };
+
+  // const activeCity = cities.find((item) => item.title === city.title);
+  // console.log(activeCity)
   return (
     <>
       <div style={{display: 'none'}}>
@@ -70,36 +105,7 @@ export default function Main({placesCount, offers}:PlacesCountProp): JSX.Element
           <div className="tabs">
             <section className="locations container">
               <ul className="locations__list tabs__list">
-                <li className="locations__item">
-                  <a className="locations__item-link tabs__item" href="#todo">
-                    <span>Paris</span>
-                  </a>
-                </li>
-                <li className="locations__item">
-                  <a className="locations__item-link tabs__item" href="#todo">
-                    <span>Cologne</span>
-                  </a>
-                </li>
-                <li className="locations__item">
-                  <a className="locations__item-link tabs__item" href="#todo">
-                    <span>Brussels</span>
-                  </a>
-                </li>
-                <li className="locations__item">
-                  <a className="locations__item-link tabs__item tabs__item--active" href="#todo">
-                    <span>Amsterdam</span>
-                  </a>
-                </li>
-                <li className="locations__item">
-                  <a className="locations__item-link tabs__item" href="#todo">
-                    <span>Hamburg</span>
-                  </a>
-                </li>
-                <li className="locations__item">
-                  <a className="locations__item-link tabs__item" href="#todo">
-                    <span>Dusseldorf</span>
-                  </a>
-                </li>
+                <CitiesList city={city} onCityClick={onCityClick}/>
               </ul>
             </section>
           </div>
@@ -107,7 +113,7 @@ export default function Main({placesCount, offers}:PlacesCountProp): JSX.Element
             <div className="cities__places-container container">
               <section className="cities__places places">
                 <h2 className="visually-hidden">Places</h2>
-                <b className="places__found">{placesCount} places to stay in Amsterdam</b>
+                <b className="places__found">{offers.length} places to stay in Amsterdam</b>
                 <form className="places__sorting" action="#" method="get">
                   <span className="places__sorting-caption">Sort by</span>
                   <span className="places__sorting-type" tabIndex={0}>
@@ -134,10 +140,12 @@ export default function Main({placesCount, offers}:PlacesCountProp): JSX.Element
                     </li>
                   </ul>
                 </form>
-                <OffersList offers={offers[0].offers}/>
+                <OffersList offers={offers} onListItemHover={onListItemHover}/>
               </section>
               <div className="cities__right-section">
-                <section className="cities__map map"></section>
+                <section className="cities__map map">
+                  <Map city={city} offers={offers} activePoint={activeCard}/>
+                </section>
               </div>
             </div>
           </div>
@@ -146,3 +154,8 @@ export default function Main({placesCount, offers}:PlacesCountProp): JSX.Element
     </>
   );
 }
+
+export {Main};
+export default connector(Main);
+
+

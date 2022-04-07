@@ -11,6 +11,7 @@ import { Actions } from '../../types/action';
 import { State } from '../../types/state';
 import { changeCity, createOffersList } from '../../store/actions';
 import { CitiesList } from '../citiesList/citiesList';
+import Sort from '../sort/sort';
 
 type MainPageProps = {
   placesCount:number
@@ -114,7 +115,8 @@ function Main({placesCount, cities, offers, onCityClick, city}: ConnectedCompone
               <section className="cities__places places">
                 <h2 className="visually-hidden">Places</h2>
                 <b className="places__found">{offers.length} places to stay in Amsterdam</b>
-                <form className="places__sorting" action="#" method="get">
+                <Sort/>
+                {/* <form className="places__sorting" action="#" method="get">
                   <span className="places__sorting-caption">Sort by</span>
                   <span className="places__sorting-type" tabIndex={0}>
                     Popular
@@ -139,7 +141,7 @@ function Main({placesCount, cities, offers, onCityClick, city}: ConnectedCompone
                       Top rated first
                     </li>
                   </ul>
-                </form>
+                </form> */}
                 <OffersList offers={offers} onListItemHover={onListItemHover}/>
               </section>
               <div className="cities__right-section">

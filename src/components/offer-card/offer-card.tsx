@@ -4,11 +4,11 @@ import { Offer } from '../../types/offers';
 
 type OfferProps = {
   offer: Offer
-  // onClick: () => void
 }
 
 export default function OfferCard ({offer}: OfferProps):JSX.Element {
-  const { id, name, isPremium, price, rating,  details,  photos} = offer;
+  const { id, title, isPremium, price, rating, type, previewImage, isFavorite} = offer;
+
   return (
     <>
       { isPremium
@@ -21,7 +21,7 @@ export default function OfferCard ({offer}: OfferProps):JSX.Element {
         <a href="#todo">
           <img
             className="place-card__image"
-            src={photos[0]}
+            src={previewImage}
             width="260"
             height="200"
             alt="Place "
@@ -37,7 +37,7 @@ export default function OfferCard ({offer}: OfferProps):JSX.Element {
             </span>
           </div>
           <button
-            className="place-card__bookmark-button button"
+            className={isFavorite ? 'place-card__bookmark-button place-card__bookmark-button--active button': 'place-card__bookmark-button button'}
             type="button"
           >
             <svg
@@ -57,9 +57,9 @@ export default function OfferCard ({offer}: OfferProps):JSX.Element {
           </div>
         </div>
         <h2 className="place-card__name">
-          <Link to={`${AppRoutes.Room}/${id}`}>{name}</Link>
+          <Link to={`${AppRoutes.Room}/${id}`}>{title}</Link>
         </h2>
-        <p className="place-card__type">{details.type}</p>
+        <p className="place-card__type">{type[0].toUpperCase()+type.slice(1)}</p>
       </div>
     </>
   );

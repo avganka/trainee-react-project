@@ -1,51 +1,52 @@
 import { Dispatch, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { AppRoutes } from '../../const';
-import { City } from '../../types/cities';
-import { Offer } from '../../types/offers';
 import Logo from '../logo/logo';
 import OffersList from '../offers-list/offers-list';
 import Map from '../map/map';
 import { connect, ConnectedProps } from 'react-redux';
 import { Actions } from '../../types/action';
 import { State } from '../../types/state';
-import { changeCity, createOffersList } from '../../store/actions';
+import { changeCity} from '../../store/actions';
 import { CitiesList } from '../citiesList/citiesList';
-import Sort from '../sort/sort';
+import { loadOffersFromServer, logoutAction } from '../../store/api-actions';
+import PageNotFound from '../page-not-found/page-not-found';
+import { store } from '../../store/store';
 
-type MainPageProps = {
-  placesCount:number
-  cities: City[],
-  offers: Offer[]
-}
 
-const mapStateToProps = ({city, offers}: State) => ({
-  city,
+const mapStateToProps = ({activeCity, offers, sortingType, isDataLoaded}: State) => ({
+  activeCity,
   offers,
+  sortingType,
+  isDataLoaded,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<Actions>) => ({
-  onCityClick(city: City) {
+  onCityClick(city:string) {
     dispatch(changeCity(city));
-    dispatch(createOffersList());
+    store.dispatch(loadOffersFromServer());
   },
 });
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
-type ConnectedComponentProps = PropsFromRedux & MainPageProps;
+// type ConnectedComponentProps = PropsFromRedux & MainPageProps;
 
 
-function Main({placesCount, cities, offers, onCityClick, city}: ConnectedComponentProps): JSX.Element {
-  const [activeCard, setActiveCard] = useState('');
+function Main({activeCity, offers, onCityClick, sortingType, isDataLoaded}: PropsFromRedux): JSX.Element {
+  const [activeCard, setActiveCard] = useState(0);
 
-  const onListItemHover = (activeOffer:string) => {
+  const onListItemHover = (activeOffer:number) => {
     setActiveCard(activeOffer);
   };
 
-  // const activeCity = cities.find((item) => item.title === city.title);
-  // console.log(activeCity)
+  const logoutHandler = () => {
+    store.dispatch(logoutAction());
+  };
+
+  if (!offers) {
+    return <PageNotFound/>;
+  }
+
   return (
     <>
       <div style={{display: 'none'}}>
@@ -93,7 +94,13 @@ function Main({placesCount, cities, offers, onCityClick, city}: ConnectedCompone
                     </a>
                   </li>
                   <li className="header__nav-item">
-                    <Link className="header__nav-link" to={AppRoutes.Login}>Sign out</Link>
+                    <a className="header__nav-link" href='/' onClick={(evt) => {
+                      evt.preventDefault();
+                      logoutHandler();
+                    }}
+                    >
+                      Sign out
+                    </a>
                   </li>
                 </ul>
               </nav>
@@ -106,47 +113,18 @@ function Main({placesCount, cities, offers, onCityClick, city}: ConnectedCompone
           <div className="tabs">
             <section className="locations container">
               <ul className="locations__list tabs__list">
-                <CitiesList city={city} onCityClick={onCityClick}/>
+                <CitiesList activeCity={activeCity} onCityClick={onCityClick}/>
               </ul>
             </section>
           </div>
           <div className="cities">
             <div className="cities__places-container container">
               <section className="cities__places places">
-                <h2 className="visually-hidden">Places</h2>
-                <b className="places__found">{offers.length} places to stay in Amsterdam</b>
-                <Sort/>
-                {/* <form className="places__sorting" action="#" method="get">
-                  <span className="places__sorting-caption">Sort by</span>
-                  <span className="places__sorting-type" tabIndex={0}>
-                    Popular
-                    <svg className="places__sorting-arrow" width="7" height="4">
-                      <use xlinkHref="#icon-arrow-select"></use>
-                    </svg>
-                  </span>
-                  <ul className="places__options places__options--custom places__options--opened">
-                    <li
-                      className="places__option places__option--active"
-                      tabIndex={0}
-                    >
-                      Popular
-                    </li>
-                    <li className="places__option" tabIndex={0}>
-                      Price: low to high
-                    </li>
-                    <li className="places__option" tabIndex={0}>
-                      Price: high to low
-                    </li>
-                    <li className="places__option" tabIndex={0}>
-                      Top rated first
-                    </li>
-                  </ul>
-                </form> */}
-                <OffersList offers={offers} onListItemHover={onListItemHover}/>
+                <OffersList offers={offers} activeCity={activeCity} onListItemHover={onListItemHover} sortingType={sortingType}/>
               </section>
               <div className="cities__right-section">
                 <section className="cities__map map">
-                  <Map city={city} offers={offers} activePoint={activeCard}/>
+                  <Map activePoint={activeCard}/>
                 </section>
               </div>
             </div>

@@ -1,26 +1,44 @@
+import { useEffect } from 'react';
+import { connect, ConnectedProps } from 'react-redux';
 import { useParams} from 'react-router-dom';
-import { Offer } from '../../types/offers';
-import { Reviews } from '../../types/reviews';
+import { MOUNTHS } from '../../const';
+import { loadDetailedOfferFromServer, loadNearbyOffersFromServer, loadReviewsFromServer } from '../../store/api-actions';
+import { store } from '../../store/store';
+import { State } from '../../types/state';
 import ReviewForm from '../form-review/form-review';
 import Logo from '../logo/logo';
 import PageNotFound from '../page-not-found/page-not-found';
-
-type OfferDetailedProps = {
-  offers: Offer[],
-  reviews: Reviews,
-}
+import { Preloader } from '../preloader/preloader';
 
 
-export default function OfferDetailed({offers, reviews}:OfferDetailedProps):JSX.Element {
-  const id = useParams().id;
+const mapStateToProps = ({detailedOffer, reviews, nearbyOffers}: State) => ({
+  detailedOffer,
+  nearbyOffers,
+  reviews,
+});
 
-  const currentOffer = offers.find((offer) => offer.id === id);
+const connector = connect(mapStateToProps);
 
-  if (!currentOffer) {
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+function OfferDetailed({detailedOffer, reviews, nearbyOffers}:PropsFromRedux):JSX.Element {
+  const id = Number(useParams().id);
+
+  useEffect(() => {
+    store.dispatch(loadDetailedOfferFromServer(id));
+    store.dispatch(loadReviewsFromServer(id));
+    store.dispatch(loadNearbyOffersFromServer(id));
+  }, [id]);
+
+  if (!detailedOffer) {
     return <PageNotFound/>;
   }
 
-  const {name, price, photos, rating, description, details, facilities, host} = currentOffer;
+  if (!nearbyOffers) {
+    return <Preloader/>;
+  }
+
+  const {title, price, images, rating, description, isPremium, maxAdults, goods, host, type, bedrooms} = detailedOffer;
 
   return (
     <>
@@ -79,21 +97,30 @@ export default function OfferDetailed({offers, reviews}:OfferDetailedProps):JSX.
           <section className="property">
             <div className="property__gallery-container container">
               <div className="property__gallery">
-                {photos.map((photo) => (
-                  <div key={`${id}-${photo}`} className="property__image-wrapper">
-                    <img className="property__image" src={photo} alt="Studio"/>
-                  </div>
-                ))}
+                {images.map((photo: string, i: number) => {
+                  if (i < 6) {
+                    return(
+                      <div key={`${id}-${photo}`} className="property__image-wrapper">
+                        <img className="property__image" src={photo} alt="Studio"/>
+                      </div>
+                    );}
+                  return '';
+                },
+                )}
               </div>
             </div>
             <div className="property__container container">
               <div className="property__wrapper">
                 <div className="property__mark">
-                  <span>Premium</span>
+                  {
+                    isPremium
+                      ? <span>Premium</span>
+                      : ''
+                  }
                 </div>
                 <div className="property__name-wrapper">
                   <h1 className="property__name">
-                    {name}
+                    {title}
                   </h1>
                   <button className="property__bookmark-button button" type="button">
                     <svg className="property__bookmark-icon" width="31" height="33">
@@ -111,13 +138,13 @@ export default function OfferDetailed({offers, reviews}:OfferDetailedProps):JSX.
                 </div>
                 <ul className="property__features">
                   <li className="property__feature property__feature--entire">
-                    {details.type}
+                    {type[0].toUpperCase()+type.slice(1)}
                   </li>
                   <li className="property__feature property__feature--bedrooms">
-                    {details.bedrooms} Bedrooms
+                    {bedrooms === 1 ? `${bedrooms} Bedroom` : `${bedrooms} Bedrooms`}
                   </li>
                   <li className="property__feature property__feature--adults">
-                    Max {details.maxAdults} adults
+                    {maxAdults === 1 ? `Max ${maxAdults} adult` : `Max ${maxAdults} adults`}
                   </li>
                 </ul>
                 <div className="property__price">
@@ -128,9 +155,9 @@ export default function OfferDetailed({offers, reviews}:OfferDetailedProps):JSX.
                   <h2 className="property__inside-title">What&apos;s inside</h2>
                   <ul className="property__inside-list">
                     {
-                      facilities.map((item) => (
-                        <li key={`${id}-${item}`} className="property__inside-item">
-                          {item}
+                      goods.map((good) => (
+                        <li key={`${id}-${good}`} className="property__inside-item">
+                          {good}
                         </li>
                       ))
                     }
@@ -140,14 +167,16 @@ export default function OfferDetailed({offers, reviews}:OfferDetailedProps):JSX.
                   <h2 className="property__host-title">Meet the host</h2>
                   <div className="property__host-user user">
                     <div className="property__avatar-wrapper property__avatar-wrapper--pro user__avatar-wrapper">
-                      <img className="property__avatar user__avatar" src={host.photo} width="74" height="74" alt="Host avatar"/>
+                      <img className="property__avatar user__avatar" src={host.avatarUrl} width="74" height="74" alt="Host avatar"/>
                     </div>
                     <span className="property__user-name">
                       {host.name}
                     </span>
-                    <span className="property__user-status">
-                      {host.status}
-                    </span>
+                    {
+                      host.isPro
+                        ? <span className="property__user-status">Pro</span>
+                        : ''
+                    }
                   </div>
                   <div className="property__description">
                     <p className="property__text">
@@ -156,34 +185,39 @@ export default function OfferDetailed({offers, reviews}:OfferDetailedProps):JSX.
                   </div>
                 </div>
                 <section className="property__reviews reviews">
-                  <h2 className="reviews__title">Reviews &middot; <span className="reviews__amount">{reviews.reviews.length}</span></h2>
+                  <h2 className="reviews__title">Reviews &middot; <span className="reviews__amount">{reviews.length}</span></h2>
                   <ul className="reviews__list">
-                    {
-                      reviews.reviews.map((review) => (
-                        <li key={`${review.userName}-${id}-${name}`} className="reviews__item">
-                          <div className="reviews__user user">
-                            <div className="reviews__avatar-wrapper user__avatar-wrapper">
-                              <img className="reviews__avatar user__avatar" src={review.userAvatar} width="54" height="54" alt="Reviews avatar"/>
-                            </div>
-                            <span className="reviews__user-name">
-                              {review.userName}
-                            </span>
-                          </div>
-                          <div className="reviews__info">
-                            <div className="reviews__rating rating">
-                              <div className="reviews__stars rating__stars">
-                                <span style={{width: '80%'}}></span>
-                                <span className="visually-hidden">{review.score}</span>
+                    { reviews
+                      ? (
+                        reviews.map((review) => {
+                          const date = new Date(reviews[0].date);
+                          const result = `${date.getDate()} ${MOUNTHS[date.getMonth()]} ${date.getFullYear()}`;
+                          return (
+                            <li key={review.id} className="reviews__item">
+                              <div className="reviews__user user">
+                                <div className="reviews__avatar-wrapper user__avatar-wrapper">
+                                  <img className="reviews__avatar user__avatar" src={review.user.avatarUrl} width="54" height="54" alt="Reviews avatar"/>
+                                </div>
+                                <span className="reviews__user-name">
+                                  {review.user.name}
+                                </span>
                               </div>
-                            </div>
-                            <p className="reviews__text">
-                              {review.text}
-                            </p>
-                            <time className="reviews__time" dateTime="2019-04-24">{review.date}</time>
-                          </div>
-                        </li>
-                      ))
-                    }
+                              <div className="reviews__info">
+                                <div className="reviews__rating rating">
+                                  <div className="reviews__stars rating__stars">
+                                    <span style={{width: '80%'}}></span>
+                                    <span className="visually-hidden">{review.rating}</span>
+                                  </div>
+                                </div>
+                                <p className="reviews__text">
+                                  {review.comment}
+                                </p>
+                                <time className="reviews__time" dateTime={review.date}>{result}</time>
+                              </div>
+                            </li>
+                          );})
+                      )
+                      : <Preloader/>}
 
                     {/* <li className="reviews__item">
                       <div className="reviews__user user">
@@ -218,101 +252,43 @@ export default function OfferDetailed({offers, reviews}:OfferDetailedProps):JSX.
             <section className="near-places places">
               <h2 className="near-places__title">Other places in the neighbourhood</h2>
               <div className="near-places__list places__list">
-                <article className="near-places__card place-card">
-                  <div className="near-places__image-wrapper place-card__image-wrapper">
-                    <a href="#todo">
-                      <img className="place-card__image" src="img/room.jpg" width="260" height="200" alt="Place img"/>
-                    </a>
-                  </div>
-                  <div className="place-card__info">
-                    <div className="place-card__price-wrapper">
-                      <div className="place-card__price">
-                        <b className="place-card__price-value">&euro;80</b>
-                        <span className="place-card__price-text">&#47;&nbsp;night</span>
+                {nearbyOffers.map((offer) =>
+                  (
+                    <article key={offer.id} className="near-places__card place-card">
+                      <div className="near-places__image-wrapper place-card__image-wrapper">
+                        <a href="#todo">
+                          <img className="place-card__image" src={offer.previewImage} width="260" height="200" alt="Place img"/>
+                        </a>
                       </div>
-                      <button className="place-card__bookmark-button place-card__bookmark-button--active button" type="button">
-                        <svg className="place-card__bookmark-icon" width="18" height="19">
-                          <use xlinkHref="#icon-bookmark"></use>
-                        </svg>
-                        <span className="visually-hidden">In bookmarks</span>
-                      </button>
-                    </div>
-                    <div className="place-card__rating rating">
-                      <div className="place-card__stars rating__stars">
-                        <span style={{width: '80%'}}></span>
-                        <span className="visually-hidden">Rating</span>
-                      </div>
-                    </div>
-                    <h2 className="place-card__name">
-                      <a href="#todo">Wood and stone place</a>
-                    </h2>
-                    <p className="place-card__type">Private room</p>
-                  </div>
-                </article>
+                      <div className="place-card__info">
+                        <div className="place-card__price-wrapper">
+                          <div className="place-card__price">
+                            <b className="place-card__price-value">&euro;{offer.price}</b>
+                            <span className="place-card__price-text">&#47;&nbsp;night</span>
+                          </div>
 
-                <article className="near-places__card place-card">
-                  <div className="near-places__image-wrapper place-card__image-wrapper">
-                    <a href="#todo">
-                      <img className="place-card__image" src="img/apartment-02.jpg" width="260" height="200" alt="Place img"/>
-                    </a>
-                  </div>
-                  <div className="place-card__info">
-                    <div className="place-card__price-wrapper">
-                      <div className="place-card__price">
-                        <b className="place-card__price-value">&euro;132</b>
-                        <span className="place-card__price-text">&#47;&nbsp;night</span>
-                      </div>
-                      <button className="place-card__bookmark-button button" type="button">
-                        <svg className="place-card__bookmark-icon" width="18" height="19">
-                          <use xlinkHref="#icon-bookmark"></use>
-                        </svg>
-                        <span className="visually-hidden">To bookmarks</span>
-                      </button>
-                    </div>
-                    <div className="place-card__rating rating">
-                      <div className="place-card__stars rating__stars">
-                        <span style={{width: '80%'}}></span>
-                        <span className="visually-hidden">Rating</span>
-                      </div>
-                    </div>
-                    <h2 className="place-card__name">
-                      <a href="#todo">Canal View Prinsengracht</a>
-                    </h2>
-                    <p className="place-card__type">Apartment</p>
-                  </div>
-                </article>
+                          <button className={offer.isFavorite ? 'place-card__bookmark-button place-card__bookmark-button--active button': 'place-card__bookmark-button button'} type="button">
+                            <svg className="place-card__bookmark-icon" width="18" height="19">
+                              <use xlinkHref="#icon-bookmark"></use>
+                            </svg>
+                            <span className="visually-hidden">In bookmarks</span>
+                          </button>
 
-                <article className="near-places__card place-card">
-                  <div className="near-places__image-wrapper place-card__image-wrapper">
-                    <a href="#todo">
-                      <img className="place-card__image" src="img/apartment-03.jpg" width="260" height="200" alt="Place img"/>
-                    </a>
-                  </div>
-                  <div className="place-card__info">
-                    <div className="place-card__price-wrapper">
-                      <div className="place-card__price">
-                        <b className="place-card__price-value">&euro;180</b>
-                        <span className="place-card__price-text">&#47;&nbsp;night</span>
+                        </div>
+                        <div className="place-card__rating rating">
+                          <div className="place-card__stars rating__stars">
+                            <span style={{ width: `${offer.rating * 100 / 5}%` }}></span>
+                            <span className="visually-hidden">Rating</span>
+                          </div>
+                        </div>
+                        <h2 className="place-card__name">
+                          <a href="#todo">{offer.title}</a>
+                        </h2>
+                        <p className="place-card__type">{offer.type[0].toUpperCase()+offer.type.slice(1)}</p>
                       </div>
-                      <button className="place-card__bookmark-button button" type="button">
-                        <svg className="place-card__bookmark-icon" width="18" height="19">
-                          <use xlinkHref="#icon-bookmark"></use>
-                        </svg>
-                        <span className="visually-hidden">To bookmarks</span>
-                      </button>
-                    </div>
-                    <div className="place-card__rating rating">
-                      <div className="place-card__stars rating__stars">
-                        <span style={{width: '100%'}}></span>
-                        <span className="visually-hidden">Rating</span>
-                      </div>
-                    </div>
-                    <h2 className="place-card__name">
-                      <a href="#todo">Nice, cozy, warm big bed apartment</a>
-                    </h2>
-                    <p className="place-card__type">Apartment</p>
-                  </div>
-                </article>
+                    </article>
+                  ),
+                )}
               </div>
             </section>
           </div>
@@ -321,3 +297,7 @@ export default function OfferDetailed({offers, reviews}:OfferDetailedProps):JSX.
     </>
   );
 }
+
+export {OfferDetailed};
+export default connector(OfferDetailed);
+

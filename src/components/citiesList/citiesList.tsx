@@ -1,21 +1,22 @@
-import { cities } from '../../mocks/cities';
-import { City } from '../../types/cities';
+import { CITIES_LIST } from '../../const';
 
 type CityListProps = {
-  city: City
-  onCityClick: (city:City) => void
+  activeCity: string
+  onCityClick: (city:string) => void
 }
 
-function CitiesList({city, onCityClick}:CityListProps):JSX.Element {
+function CitiesList({activeCity, onCityClick}:CityListProps):JSX.Element {
   return (
     <>
-      {cities.map((item) => (
-        <li key={item.title} className="locations__item">
-          <a className={city.title === item.title ? 'locations__item-link tabs__item tabs__item--active' : 'locations__item-link tabs__item'} href={'#'} onClick={(event) => {
-            onCityClick(item);
-          }}
+      {CITIES_LIST.map((city) => (
+        <li key={city} className="locations__item">
+          <a className={city === activeCity ? 'locations__item-link tabs__item tabs__item--active' : 'locations__item-link tabs__item'} href={'/'}
+            onClick={(e) => {
+              e.preventDefault();
+              onCityClick(city);
+            }}
           >
-            <span>{item.title}</span>
+            <span>{city}</span>
           </a>
         </li>
       ))}

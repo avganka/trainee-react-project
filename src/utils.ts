@@ -1,13 +1,11 @@
 import { SORTING_TYPES } from './components/sort/sort';
-import { City } from './types/cities';
 import { Offer } from './types/offers';
-import { offers as initilaOffers} from './mocks/offers';
 
-export const sortOffers = (offers: Offer[], typeSort: string, city: City) => {
+export const sortOffers = (offers:  Offer[], typeSort:  string, city:  string) => {
 
   switch (typeSort) {
     case SORTING_TYPES[0]:
-      return filterOffers(initilaOffers, city);
+      return filterOffers(offers, city);
     case SORTING_TYPES[1]:
       return offers.slice().sort((a, b) => a.price - b.price);
     case SORTING_TYPES[2]:
@@ -19,4 +17,4 @@ export const sortOffers = (offers: Offer[], typeSort: string, city: City) => {
   }
 };
 
-export const filterOffers = (offers: Offer[], city: City) => offers.filter((offer) => offer.city === city.title);
+export const filterOffers = (offers:  Offer[], city:  string):Offer[] => offers.filter((offer) => offer.city.name === city);

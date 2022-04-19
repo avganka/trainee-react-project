@@ -1,25 +1,36 @@
 import { Offer } from '../../types/offers';
+import { filterOffers, sortOffers } from '../../utils';
 import OfferCard from '../offer-card/offer-card';
+import Sort from '../sort/sort';
 
 type RoomListProps = {
   offers: Offer[];
-  onListItemHover: (activeOffer: string) => void
+  onListItemHover: (activeOffer: number) => void,
+  activeCity: string,
+  sortingType: string,
 }
 
+export default function OffersList ({offers, onListItemHover, activeCity, sortingType}:RoomListProps) {
 
-export default function OffersList ({offers, onListItemHover}:RoomListProps) {
+  const filteredOffers = filterOffers(offers, activeCity);
+  const sortedOffers = sortOffers(filteredOffers, sortingType, activeCity);
 
   return (
-    <div className="cities__places-list places__list tabs__content">
-      {
-        offers.map((offer) => (
-          <article className="cities__place-card place-card" key={offer.id} onMouseEnter={() => onListItemHover(offer.id)}>
-            <OfferCard
-              offer={offer}
-            />
-          </article>
-        ))
-      }
-    </div>
+    <>
+      <h2 className="visually-hidden">Places</h2>
+      <b className="places__found">{sortedOffers.length} places to stay in {activeCity}</b>
+      <Sort/>
+      <div className="cities__places-list places__list tabs__content">
+        {
+          sortedOffers.map((offer) => (
+            <article className="cities__place-card place-card" key={offer.id} onMouseEnter={() => onListItemHover(offer.id)}>
+              <OfferCard
+                offer={offer}
+              />
+            </article>
+          ))
+        }
+      </div>
+    </>
   );
 }

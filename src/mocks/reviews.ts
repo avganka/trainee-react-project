@@ -1,6 +1,4 @@
-import { ReviewsMocks } from '../types/reviews';
-
-export const reviews: ReviewsMocks = [
+export const reviews: any = [
   {
     offerId: 1,
     reviews: [

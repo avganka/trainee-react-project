@@ -1,14 +1,23 @@
-import { City } from './cities';
+import { Login } from './login';
+import { Offer } from './offers';
+import { Review } from './reviews';
 
 export const enum ActionType {
   changeCity = 'main/changeCity',
   createOffersList = 'main/createOffersList',
-  sorting = 'main/sortOffers'
+  sorting = 'main/sortOffers',
+  loadOffers = 'data/loadOffers',
+  loadDetailedOffer = 'data/loadDetailedOffer',
+  loadFavories = 'data/loadFavories',
+  loadReviews = 'data/loadReviews',
+  requireAuthorization = 'login/requireAuthorization',
+  requireLogout = 'logon/requireLogout',
+  loadNearbyOffers= 'data/loadNearbyOffers'
 }
 
 export type ChangeCityAction = {
   type: ActionType.changeCity;
-  payload: City;
+  payload: string;
 }
 
 export type CreateOffersListAction = {
@@ -20,4 +29,35 @@ export type sortingAction = {
   payload: string
 }
 
-export type Actions = ChangeCityAction | CreateOffersListAction | sortingAction;
+export type loadOffersAction = {
+  type: ActionType.loadOffers;
+  payload: Offer[];
+}
+export type loadNearbyOffersAction = {
+  type: ActionType.loadNearbyOffers;
+  payload: Offer[];
+}
+
+export type loadDetailedOfferAction = {
+  type: ActionType.loadDetailedOffer;
+  payload: Offer;
+}
+
+export type loadFavoritesAction = {
+  type: ActionType.loadFavories;
+  payload: unknown;
+}
+
+export type loadReviewsAction = {
+  type: ActionType.loadReviews;
+  payload: Review[];
+}
+export type requireAuthorizationAction = {
+  type: ActionType.requireAuthorization;
+  payload: Login
+}
+export type requireLogoutAction = {
+  type: ActionType.requireLogout;
+}
+
+export type Actions = ChangeCityAction | CreateOffersListAction | sortingAction | loadOffersAction | loadFavoritesAction | loadReviewsAction | loadDetailedOfferAction | requireAuthorizationAction | requireLogoutAction| loadNearbyOffersAction;

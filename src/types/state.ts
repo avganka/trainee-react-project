@@ -1,9 +1,16 @@
-import { City } from './cities';
+import { Login } from './login';
 import { Offer } from './offers';
+import { Review } from './reviews';
 
 export type State = {
-  city: City,
+  activeCity: string,
   offers: Offer[];
-  sortingType: string
+  detailedOffer: Offer | null,
+  nearbyOffers: Offer[] | null,
+  sortingType: string,
+  favoriteOffers: unknown,
+  reviews: Review[],
+  isDataLoaded: boolean,
+  authorizationStatus: Login,
 }
 

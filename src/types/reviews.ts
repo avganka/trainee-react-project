@@ -1,14 +1,12 @@
-export type ReviewsMocks = Reviews[];
-
-export type Reviews = {
-  offerId: number,
-  reviews: Review[]
-}
-
 export type Review = {
-  userName: string,
-  userAvatar: string,
-  text: string,
-  score: number,
+  comment: string,
   date: string,
+  id: number,
+  rating: number,
+  user: {
+    avatarUrl: string,
+    id: number,
+    isPro: false,
+    name: string
+  }
 }

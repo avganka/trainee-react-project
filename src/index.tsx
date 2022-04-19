@@ -1,15 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
 import App from './components/app/app';
-import { reducer } from './store/reducer';
-import {composeWithDevTools} from 'redux-devtools-extension';
+import { checkAuthAction, loadOffersFromServer } from './store/api-actions';
+import { store } from './store/store';
 
-const store = createStore(
-  reducer,
-  composeWithDevTools(),
-);
+store.dispatch(loadOffersFromServer());
+store.dispatch(checkAuthAction());
 
 ReactDOM.render(
   <React.StrictMode>

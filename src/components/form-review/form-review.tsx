@@ -1,16 +1,27 @@
-import { ChangeEvent, useRef, useState } from 'react';
+import axios from 'axios';
+import { ChangeEvent, FormEvent, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { APIRoute, AppRoutes } from '../../const';
+import { api } from '../../store/store';
 
 export default function ReviewForm ():JSX.Element {
 
   const [review, setReview] = useState({
+    comment: '',
     rating: 0,
-    review: '',
   });
+  const id = Number(useParams().id);
 
-
+  const onSubmitHandler = (evt: FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+    api.post(`${APIRoute.Comments}/${id}`, review)
+      .catch((error) => {
+        throw new Error(`Не удалось отправить комментарий. Ошибка: ${error}`);
+      });
+  };
 
   return (
-    <form className="reviews__form form" action="#" method="post">
+    <form className="reviews__form form" action="#" method="post" onSubmit={onSubmitHandler}>
       <label className="reviews__label form__label" htmlFor="review">Your review</label>
       <div className="reviews__rating-form form__rating">
         <input className="form__rating-input visually-hidden" name="rating" value="5" id="5-stars" type="radio" onChange={({target}:ChangeEvent<HTMLInputElement>) => {
@@ -65,7 +76,7 @@ export default function ReviewForm ():JSX.Element {
         </label>
       </div>
       <textarea className="reviews__textarea form__textarea" id="review" name="review" placeholder="Tell how was your stay, what you like and what can be improved" onChange={({target}:ChangeEvent<HTMLTextAreaElement>) => {
-        setReview({...review, review: target.value});
+        setReview({...review, comment: target.value});
       }}
       >
       </textarea>
@@ -73,7 +84,7 @@ export default function ReviewForm ():JSX.Element {
         <p className="reviews__help">
                         To submit review please make sure to set <span className="reviews__star">rating</span> and describe your stay with at least <b className="reviews__text-amount">50  characters</b>.
         </p>
-        <button className="reviews__submit form__submit button" type="submit" disabled={!review.rating || !review.review}>Submit</button>
+        <button className="reviews__submit form__submit button" type="submit" disabled={!review.rating || !review.comment}>Submit</button>
       </div>
     </form>
   );

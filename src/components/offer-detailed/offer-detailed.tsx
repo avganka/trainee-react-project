@@ -10,6 +10,7 @@ import Logo from '../logo/logo';
 import { Navigation } from '../navigation/navigation';
 import PageNotFound from '../page-not-found/page-not-found';
 import { Preloader } from '../preloader/preloader';
+import Map from '../map/map';
 
 
 const mapStateToProps = ({detailedOffer, reviews, nearbyOffers, authorizationStatus}: State) => ({
@@ -212,7 +213,12 @@ function OfferDetailed({detailedOffer, reviews, nearbyOffers, authorizationStatu
                 </section>
               </div>
             </div>
-            <section className="property__map map"></section>
+            <section className="property__map map">
+              {
+                nearbyOffers ? <Map activePoint={id} offers={nearbyOffers}/> : ''
+              }
+
+            </section>
           </section>
           <div className="container">
             <section className="near-places places">

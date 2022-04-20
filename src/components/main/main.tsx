@@ -11,6 +11,7 @@ import { loadOffersFromServer } from '../../store/api-actions';
 import PageNotFound from '../page-not-found/page-not-found';
 import { store } from '../../store/store';
 import { Navigation } from '../navigation/navigation';
+import { filterOffers } from '../../utils';
 
 
 const mapStateToProps = ({activeCity, offers, sortingType, authorizationStatus}: State) => ({
@@ -43,6 +44,7 @@ function Main({activeCity, offers, onCityClick, sortingType, authorizationStatus
   if (!offers) {
     return <PageNotFound/>;
   }
+  const filteredOffers = filterOffers(offers, activeCity);
 
   return (
     <>
@@ -94,11 +96,11 @@ function Main({activeCity, offers, onCityClick, sortingType, authorizationStatus
           <div className="cities">
             <div className="cities__places-container container">
               <section className="cities__places places">
-                <OffersList offers={offers} activeCity={activeCity} onListItemHover={onListItemHover} sortingType={sortingType}/>
+                <OffersList offers={filteredOffers} activeCity={activeCity} onListItemHover={onListItemHover} sortingType={sortingType}/>
               </section>
               <div className="cities__right-section">
                 <section className="cities__map map">
-                  <Map activePoint={activeCard}/>
+                  <Map activePoint={activeCard} offers={filteredOffers}/>
                 </section>
               </div>
             </div>

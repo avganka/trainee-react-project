@@ -3,12 +3,10 @@ import { useEffect, useRef } from 'react';
 import useMap from '../../hooks/useMap';
 import 'leaflet/dist/leaflet.css';
 import { Offer } from '../../types/offers';
-import { connect, ConnectedProps } from 'react-redux';
-import { Actions, Dispatch } from '@reduxjs/toolkit';
-import { State } from '../../types/state';
 
 type MapProps = {
-  activePoint: number
+  activePoint: number,
+  offers: Offer[],
 }
 
 const defaultCustomIcon = new Icon({
@@ -22,26 +20,14 @@ const currentCustomIcon = new Icon({
 });
 
 
-const mapStateToProps = ({activeCity, offers}: State) => ({
-  activeCity,
-  offers,
-});
-
-
-const connector = connect(mapStateToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type ConnectedComponentProps = PropsFromRedux & MapProps;
-
-
-function Map ({activePoint, offers, activeCity}:ConnectedComponentProps):JSX.Element {
-
-  const city = offers.filter((offer) => offer.city.name === activeCity)[0].city;
+function Map ({activePoint, offers}:MapProps):JSX.Element {
+  const city = offers[0].city;
 
   const mapRef = useRef(null);
   const map = useMap(mapRef, city);
 
   useEffect(() => {
+    const markers = [];
     if (map) {
       offers.forEach((offer) => {
         const marker = new Marker({
@@ -54,14 +40,13 @@ function Map ({activePoint, offers, activeCity}:ConnectedComponentProps):JSX.Ele
             : defaultCustomIcon,
         )
           .addTo(map);
+        markers.push(marker);
       });
     }
-
   }, [offers, map, activePoint]);
 
   return <div style = {{height: '100%'}} ref={mapRef}></div>;
 }
 
-export {Map};
-export default connector(Map);
-// export default Map;
+export default Map;
+

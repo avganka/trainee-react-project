@@ -5,7 +5,7 @@ export const sortOffers = (offers:  Offer[], typeSort:  string, city:  string) =
 
   switch (typeSort) {
     case SORTING_TYPES[0]:
-      return filterOffers(offers, city);
+      return offers;
     case SORTING_TYPES[1]:
       return offers.slice().sort((a, b) => a.price - b.price);
     case SORTING_TYPES[2]:

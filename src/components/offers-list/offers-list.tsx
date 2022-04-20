@@ -1,5 +1,5 @@
 import { Offer } from '../../types/offers';
-import { filterOffers, sortOffers } from '../../utils';
+import { sortOffers } from '../../utils';
 import OfferCard from '../offer-card/offer-card';
 import Sort from '../sort/sort';
 
@@ -12,8 +12,7 @@ type RoomListProps = {
 
 export default function OffersList ({offers, onListItemHover, activeCity, sortingType}:RoomListProps) {
 
-  const filteredOffers = filterOffers(offers, activeCity);
-  const sortedOffers = sortOffers(filteredOffers, sortingType, activeCity);
+  const sortedOffers = sortOffers(offers, sortingType, activeCity);
 
   return (
     <>

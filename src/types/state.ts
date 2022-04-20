@@ -1,4 +1,4 @@
-import { Login } from './login';
+import { Login, UserEmail } from './login';
 import { Offer } from './offers';
 import { Review } from './reviews';
 
@@ -12,5 +12,6 @@ export type State = {
   reviews: Review[],
   isDataLoaded: boolean,
   authorizationStatus: Login,
+  userEmail: UserEmail | null
 }
 

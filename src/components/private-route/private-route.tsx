@@ -18,6 +18,12 @@ type ConnectedPrivateRouteProps = PropsFromRedux & PrivateRouteProps;
 
 function PrivateRoute({authorizationStatus, children}: ConnectedPrivateRouteProps) {
 
+
+  if (children.type.name === 'Login') {
+    return authorizationStatus === AuthStatus.NoAuth ? children : <Navigate to={AppRoutes.Main}/>;
+  }
+
+
   return (
     authorizationStatus === AuthStatus.Auth ? children : <Navigate to={AppRoutes.Login}/>
   );

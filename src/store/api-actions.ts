@@ -2,11 +2,12 @@ import { ThunkAction } from '@reduxjs/toolkit';
 import { AxiosInstance } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { APIRoute, AuthStatus } from '../const';
+import { removeEmail, saveEmail } from '../services/email';
 import { removeToken, saveToken } from '../services/token';
 import { Actions } from '../types/action';
 import { AuthData } from '../types/login';
 import { State } from '../types/state';
-import {loadOffers, loadFavorites, loadReviews, loadDetailedOffer, requireAuthorization, requireLogout, loadNearbyOffers } from './actions';
+import {loadOffers, loadFavorites, loadReviews, loadDetailedOffer, requireAuthorization, requireLogout, loadNearbyOffers, loadUserEmail } from './actions';
 
 export const loadOffersFromServer = (): ThunkAction<Promise<void>, State, AxiosInstance, Actions> =>
   async (dispatch, _getState, api) => {
@@ -60,7 +61,9 @@ export const loginAction = ({email, password}: AuthData): ThunkAction<Promise<vo
   async (dispatch, _getState, api) => {
     const { data } =  await api.post(APIRoute.Login, {email, password});
     saveToken(data.token);
+    saveEmail(data.email);
     dispatch(requireAuthorization(AuthStatus.Auth));
+    dispatch(loadUserEmail(data.email));
   };
 
 
@@ -68,6 +71,7 @@ export const logoutAction = (): ThunkAction<Promise<void>, State, AxiosInstance,
   async (dispatch, _getState, api) => {
     api.delete(APIRoute.Logout);
     removeToken();
+    removeEmail();
     dispatch(requireLogout());
   };
 

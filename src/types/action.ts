@@ -1,4 +1,4 @@
-import { Login } from './login';
+import { Login, UserEmail } from './login';
 import { Offer } from './offers';
 import { Review } from './reviews';
 
@@ -10,9 +10,10 @@ export const enum ActionType {
   loadDetailedOffer = 'data/loadDetailedOffer',
   loadFavories = 'data/loadFavories',
   loadReviews = 'data/loadReviews',
-  requireAuthorization = 'login/requireAuthorization',
-  requireLogout = 'logon/requireLogout',
-  loadNearbyOffers= 'data/loadNearbyOffers'
+  requireAuthorization = 'user/requireAuthorization',
+  requireLogout = 'user/requireLogout',
+  loadNearbyOffers= 'data/loadNearbyOffers',
+  loadUserEmail= 'user/loadUserEmail',
 }
 
 export type ChangeCityAction = {
@@ -54,10 +55,17 @@ export type loadReviewsAction = {
 }
 export type requireAuthorizationAction = {
   type: ActionType.requireAuthorization;
-  payload: Login
+  payload: Login,
 }
+
+export type loadUserEmailAction = {
+  type: ActionType.loadUserEmail;
+  payload: UserEmail,
+}
+
+
 export type requireLogoutAction = {
   type: ActionType.requireLogout;
 }
 
-export type Actions = ChangeCityAction | CreateOffersListAction | sortingAction | loadOffersAction | loadFavoritesAction | loadReviewsAction | loadDetailedOfferAction | requireAuthorizationAction | requireLogoutAction| loadNearbyOffersAction;
+export type Actions = ChangeCityAction | CreateOffersListAction | sortingAction | loadOffersAction | loadFavoritesAction | loadReviewsAction | loadDetailedOfferAction | requireAuthorizationAction | requireLogoutAction| loadNearbyOffersAction | loadUserEmailAction;

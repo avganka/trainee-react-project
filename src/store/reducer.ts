@@ -13,6 +13,7 @@ const initialState: State = {
   reviews: [],
   isDataLoaded: false,
   authorizationStatus: AuthStatus.Unknown,
+  userEmail: null,
 };
 
 const reducer = (state: State = initialState, action: Actions): State => {
@@ -37,6 +38,8 @@ const reducer = (state: State = initialState, action: Actions): State => {
       return {...state, authorizationStatus: AuthStatus.NoAuth};
     case ActionType.loadNearbyOffers:
       return {...state, nearbyOffers: action.payload};
+    case ActionType.loadUserEmail:
+      return {...state, userEmail: action.payload};
     default:
       return state;
   }

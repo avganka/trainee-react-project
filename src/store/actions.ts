@@ -1,4 +1,4 @@
-import { ActionType, ChangeCityAction, CreateOffersListAction, loadFavoritesAction, loadOffersAction, loadReviewsAction, sortingAction, loadDetailedOfferAction, requireAuthorizationAction, requireLogoutAction, loadNearbyOffersAction} from '../types/action';
+import { ActionType, ChangeCityAction, CreateOffersListAction, loadFavoritesAction, loadOffersAction, loadReviewsAction, sortingAction, loadDetailedOfferAction, requireAuthorizationAction, requireLogoutAction, loadNearbyOffersAction, loadUserEmailAction} from '../types/action';
 import { Login } from '../types/login';
 import { Offer } from '../types/offers';
 import { Review } from '../types/reviews';
@@ -45,6 +45,11 @@ export const loadReviews = (reviews: Review[]): loadReviewsAction => ({
 export const requireAuthorization = (authStatus: Login): requireAuthorizationAction => ({
   type: ActionType.requireAuthorization,
   payload: authStatus,
+});
+
+export const loadUserEmail = (email: string): loadUserEmailAction => ({
+  type: ActionType.loadUserEmail,
+  payload: email,
 });
 
 export const requireLogout = (): requireLogoutAction => ({

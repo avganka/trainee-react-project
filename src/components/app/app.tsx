@@ -30,7 +30,13 @@ function App({authorizationStatus, isDataLoaded}:PropsFromRedux): JSX.Element {
     <BrowserRouter>
       <Routes>
         <Route path={AppRoutes.Main} element={<Main/>}/>
-        <Route path={AppRoutes.Login} element={<Login/>}/>
+        {/* <Route path={AppRoutes.Login} element={<Login/>}/> */}
+        <Route path={AppRoutes.Login} element={
+          <PrivateRoute>
+            <Login/>
+          </PrivateRoute>
+        }
+        />
         <Route path={AppRoutes.Favorites} element={
           <PrivateRoute>
             <Favorites/>

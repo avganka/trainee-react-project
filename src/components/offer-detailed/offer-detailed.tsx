@@ -1,27 +1,29 @@
 import { useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { useParams} from 'react-router-dom';
-import { MOUNTHS } from '../../const';
+import { AuthStatus, MOUNTHS } from '../../const';
 import { loadDetailedOfferFromServer, loadNearbyOffersFromServer, loadReviewsFromServer } from '../../store/api-actions';
 import { store } from '../../store/store';
 import { State } from '../../types/state';
 import ReviewForm from '../form-review/form-review';
 import Logo from '../logo/logo';
+import { Navigation } from '../navigation/navigation';
 import PageNotFound from '../page-not-found/page-not-found';
 import { Preloader } from '../preloader/preloader';
 
 
-const mapStateToProps = ({detailedOffer, reviews, nearbyOffers}: State) => ({
+const mapStateToProps = ({detailedOffer, reviews, nearbyOffers, authorizationStatus}: State) => ({
   detailedOffer,
   nearbyOffers,
   reviews,
+  authorizationStatus,
 });
 
 const connector = connect(mapStateToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-function OfferDetailed({detailedOffer, reviews, nearbyOffers}:PropsFromRedux):JSX.Element {
+function OfferDetailed({detailedOffer, reviews, nearbyOffers, authorizationStatus}:PropsFromRedux):JSX.Element {
   const id = Number(useParams().id);
 
   useEffect(() => {
@@ -73,22 +75,7 @@ function OfferDetailed({detailedOffer, reviews, nearbyOffers}:PropsFromRedux):JS
               <div className="header__left">
                 <Logo/>
               </div>
-              <nav className="header__nav">
-                <ul className="header__nav-list">
-                  <li className="header__nav-item user">
-                    <a className="header__nav-link header__nav-link--profile" href="#todo">
-                      <div className="header__avatar-wrapper user__avatar-wrapper">
-                      </div>
-                      <span className="header__user-name user__name">Oliver.conner@gmail.com</span>
-                    </a>
-                  </li>
-                  <li className="header__nav-item">
-                    <a className="header__nav-link" href="#todo">
-                      <span className="header__signout">Sign out</span>
-                    </a>
-                  </li>
-                </ul>
-              </nav>
+              <Navigation authStatus={authorizationStatus}/>
             </div>
           </div>
         </header>
@@ -187,62 +174,41 @@ function OfferDetailed({detailedOffer, reviews, nearbyOffers}:PropsFromRedux):JS
                 <section className="property__reviews reviews">
                   <h2 className="reviews__title">Reviews &middot; <span className="reviews__amount">{reviews.length}</span></h2>
                   <ul className="reviews__list">
-                    { reviews
-                      ? (
-                        reviews.map((review) => {
-                          const date = new Date(reviews[0].date);
-                          const result = `${date.getDate()} ${MOUNTHS[date.getMonth()]} ${date.getFullYear()}`;
-                          return (
-                            <li key={review.id} className="reviews__item">
-                              <div className="reviews__user user">
-                                <div className="reviews__avatar-wrapper user__avatar-wrapper">
-                                  <img className="reviews__avatar user__avatar" src={review.user.avatarUrl} width="54" height="54" alt="Reviews avatar"/>
-                                </div>
-                                <span className="reviews__user-name">
-                                  {review.user.name}
-                                </span>
+                    {
+                      reviews.map((review) => {
+                        const date = new Date(reviews[0].date);
+                        const result = `${date.getDate()} ${MOUNTHS[date.getMonth()]} ${date.getFullYear()}`;
+                        return (
+                          <li key={review.id} className="reviews__item">
+                            <div className="reviews__user user">
+                              <div className="reviews__avatar-wrapper user__avatar-wrapper">
+                                <img className="reviews__avatar user__avatar" src={review.user.avatarUrl} width="54" height="54" alt="Reviews avatar"/>
                               </div>
-                              <div className="reviews__info">
-                                <div className="reviews__rating rating">
-                                  <div className="reviews__stars rating__stars">
-                                    <span style={{width: '80%'}}></span>
-                                    <span className="visually-hidden">{review.rating}</span>
-                                  </div>
+                              <span className="reviews__user-name">
+                                {review.user.name}
+                              </span>
+                            </div>
+                            <div className="reviews__info">
+                              <div className="reviews__rating rating">
+                                <div className="reviews__stars rating__stars">
+                                  <span style={{width: '80%'}}></span>
+                                  <span className="visually-hidden">{review.rating}</span>
                                 </div>
-                                <p className="reviews__text">
-                                  {review.comment}
-                                </p>
-                                <time className="reviews__time" dateTime={review.date}>{result}</time>
                               </div>
-                            </li>
-                          );})
-                      )
-                      : <Preloader/>}
+                              <p className="reviews__text">
+                                {review.comment}
+                              </p>
+                              <time className="reviews__time" dateTime={review.date}>{result}</time>
+                            </div>
+                          </li>
+                        );})
+                    }
 
-                    {/* <li className="reviews__item">
-                      <div className="reviews__user user">
-                        <div className="reviews__avatar-wrapper user__avatar-wrapper">
-                          <img className="reviews__avatar user__avatar" src="img/avatar-max.jpg" width="54" height="54" alt="Reviews avatar"/>
-                        </div>
-                        <span className="reviews__user-name">
-                          Max
-                        </span>
-                      </div>
-                      <div className="reviews__info">
-                        <div className="reviews__rating rating">
-                          <div className="reviews__stars rating__stars">
-                            <span style={{width: '80%'}}></span>
-                            <span className="visually-hidden">Rating</span>
-                          </div>
-                        </div>
-                        <p className="reviews__text">
-                          A quiet cozy and picturesque that hides behind a a river by the unique lightness of Amsterdam. The building is green and from 18th century.
-                        </p>
-                        <time className="reviews__time" dateTime="2019-04-24">April 2019</time>
-                      </div>
-                    </li> */}
                   </ul>
-                  <ReviewForm/>
+                  {
+                    authorizationStatus === AuthStatus.Auth ? <ReviewForm/> : ''
+                  }
+
                 </section>
               </div>
             </div>

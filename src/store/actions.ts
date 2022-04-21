@@ -27,7 +27,7 @@ export const loadDetailedOffer = (offer: Offer): loadDetailedOfferAction => ({
   payload: offer,
 });
 
-export const loadFavorites = (offers: unknown): loadFavoritesAction => ({
+export const loadFavorites = (offers: Offer[]): loadFavoritesAction => ({
   type: ActionType.loadFavories,
   payload: offers,
 });

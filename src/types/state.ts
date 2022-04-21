@@ -8,7 +8,7 @@ export type State = {
   detailedOffer: Offer | null,
   nearbyOffers: Offer[] | null,
   sortingType: string,
-  favoriteOffers: unknown,
+  favoriteOffers: Offer[],
   reviews: Review[],
   isDataLoaded: boolean,
   authorizationStatus: Login,

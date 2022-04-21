@@ -1,15 +1,19 @@
+import { connect, ConnectedProps } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { AppRoutes, AuthStatus } from '../../const';
 import { getEmail } from '../../services/email';
 import { logoutAction } from '../../store/api-actions';
 import { store } from '../../store/store';
-import { Login } from '../../types/login';
+import { State } from '../../types/state';
 
-type NavigationProps = {
-  authStatus: Login,
-}
+const mapStateToProps = ({authorizationStatus}: State) => ({
+  authorizationStatus,
+});
 
-function Navigation ({authStatus}:NavigationProps):JSX.Element {
+const connector = connect(mapStateToProps);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+function Navigation ({authorizationStatus}:PropsFromRedux):JSX.Element {
 
   const logoutHandler = () => {
     store.dispatch(logoutAction());
@@ -21,7 +25,7 @@ function Navigation ({authStatus}:NavigationProps):JSX.Element {
     <nav className="header__nav">
 
       {
-        authStatus === AuthStatus.Auth
+        authorizationStatus === AuthStatus.Auth
           ?
           <ul className="header__nav-list">
             <li className="header__nav-item user">
@@ -67,3 +71,4 @@ function Navigation ({authStatus}:NavigationProps):JSX.Element {
 }
 
 export {Navigation};
+export default connector(Navigation);

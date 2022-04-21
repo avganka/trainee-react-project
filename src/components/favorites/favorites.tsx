@@ -1,16 +1,28 @@
 import { useEffect } from 'react';
+import { connect, ConnectedProps } from 'react-redux';
+import { CITIES_LIST } from '../../const';
 import { loadFavoritesFromServer } from '../../store/api-actions';
+import { store } from '../../store/store';
 import { Offer } from '../../types/offers';
+import { State } from '../../types/state';
 import Logo from '../logo/logo';
+import Navigation from '../navigation/navigation';
 
 
-export default function Favorites():JSX.Element {
+const mapStateToProps = ({favoriteOffers}: State) => ({
+  favoriteOffers,
+});
+
+const connector = connect(mapStateToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+
+function Favorites({favoriteOffers}: PropsFromRedux):JSX.Element {
   // store.dispatch(loadFavoritesFromServer());
   // useEffect(() => {
-
-  //   console.log(1);
-  // },[]);
-
+  //   store.dispatch(loadFavoritesFromServer());
+  // }, [favoriteOffers]);
 
   return (
     <>
@@ -26,22 +38,7 @@ export default function Favorites():JSX.Element {
               <div className="header__left">
                 <Logo/>
               </div>
-              <nav className="header__nav">
-                <ul className="header__nav-list">
-                  <li className="header__nav-item user">
-                    <a className="header__nav-link header__nav-link--profile" href="#todo">
-                      <div className="header__avatar-wrapper user__avatar-wrapper">
-                      </div>
-                      <span className="header__user-name user__name">Oliver.conner@gmail.com</span>
-                    </a>
-                  </li>
-                  <li className="header__nav-item">
-                    <a className="header__nav-link" href="#todo">
-                      <span className="header__signout">Sign out</span>
-                    </a>
-                  </li>
-                </ul>
-              </nav>
+              <Navigation/>
             </div>
           </div>
         </header>
@@ -52,25 +49,27 @@ export default function Favorites():JSX.Element {
               <h1 className="favorites__title">Saved listing</h1>
               <ul className="favorites__list">
                 {
-                  cities.map((city) => {
-                    const currentOffers = offers.filter((offer) => offer.city === city.title);
+                  CITIES_LIST.map((city) => {
+                    console.log(favoriteOffers);
+
+                    const currentOffers = favoriteOffers.filter((offer) => offer.city.name === city);
                     return (
-                      <li key={city.title} className="favorites__locations-items">
+                      <li key={city} className="favorites__locations-items">
                         <div className="favorites__locations locations locations--current">
                           <div className="locations__item">
                             <a className="locations__item-link" href="#todo">
-                              <span>{city.title}</span>
+                              <span>{city}</span>
                             </a>
                           </div>
                         </div>
                         <div className="favorites__places">
                           {currentOffers.map((offer) => {
-                            const { name,  price, rating,  details,  photos} = offer;
+                            const { title,  price, rating, previewImage, type} = offer;
                             return (
                               <article key={offer.id}className="favorites__card place-card">
                                 <div className="favorites__image-wrapper place-card__image-wrapper">
                                   <a href="#todo">
-                                    <img className="place-card__image" src={photos[0]} width="150" height="110" alt="Place img"/>
+                                    <img className="place-card__image" src={previewImage} width="150" height="110" alt="Place img"/>
                                   </a>
                                 </div>
                                 <div className="favorites__card-info place-card__info">
@@ -93,9 +92,9 @@ export default function Favorites():JSX.Element {
                                     </div>
                                   </div>
                                   <h2 className="place-card__name">
-                                    <a href="#todo">{name}</a>
+                                    <a href="#todo">{title}</a>
                                   </h2>
-                                  <p className="place-card__type">{details.type}</p>
+                                  <p className="place-card__type">{type}</p>
                                 </div>
                               </article>
                             );
@@ -116,3 +115,6 @@ export default function Favorites():JSX.Element {
     </>
   );
 }
+
+export {Favorites};
+export default connector(Favorites);

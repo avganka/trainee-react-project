@@ -7,7 +7,7 @@ import { store } from '../../store/store';
 import { State } from '../../types/state';
 import ReviewForm from '../form-review/form-review';
 import Logo from '../logo/logo';
-import { Navigation } from '../navigation/navigation';
+import  Navigation  from '../navigation/navigation';
 import PageNotFound from '../page-not-found/page-not-found';
 import { Preloader } from '../preloader/preloader';
 import Map from '../map/map';
@@ -40,6 +40,7 @@ function OfferDetailed({detailedOffer, reviews, nearbyOffers, authorizationStatu
   if (!nearbyOffers) {
     return <Preloader/>;
   }
+
 
   const {title, price, images, rating, description, isPremium, maxAdults, goods, host, type, bedrooms} = detailedOffer;
 
@@ -76,7 +77,7 @@ function OfferDetailed({detailedOffer, reviews, nearbyOffers, authorizationStatu
               <div className="header__left">
                 <Logo/>
               </div>
-              <Navigation authStatus={authorizationStatus}/>
+              <Navigation/>
             </div>
           </div>
         </header>

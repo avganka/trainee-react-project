@@ -10,7 +10,7 @@ import { CitiesList } from '../citiesList/citiesList';
 import { loadOffersFromServer } from '../../store/api-actions';
 import PageNotFound from '../page-not-found/page-not-found';
 import { store } from '../../store/store';
-import { Navigation } from '../navigation/navigation';
+import  Navigation  from '../navigation/navigation';
 import { filterOffers } from '../../utils';
 
 
@@ -79,7 +79,7 @@ function Main({activeCity, offers, onCityClick, sortingType, authorizationStatus
               <div className="header__left">
                 <Logo/>
               </div>
-              <Navigation authStatus={authorizationStatus}/>
+              <Navigation/>
             </div>
           </div>
         </header>

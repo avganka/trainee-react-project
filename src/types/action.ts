@@ -46,7 +46,7 @@ export type loadDetailedOfferAction = {
 
 export type loadFavoritesAction = {
   type: ActionType.loadFavories;
-  payload: unknown;
+  payload: Offer[];
 }
 
 export type loadReviewsAction = {

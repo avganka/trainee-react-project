@@ -1,6 +1,5 @@
 import { ThunkAction } from '@reduxjs/toolkit';
 import { AxiosInstance } from 'axios';
-import { useNavigate } from 'react-router-dom';
 import { APIRoute, AuthStatus } from '../const';
 import { removeEmail, saveEmail } from '../services/email';
 import { removeToken, saveToken } from '../services/token';
@@ -35,6 +34,8 @@ export const loadNearbyOffersFromServer = (id: number): ThunkAction<Promise<void
 export const loadFavoritesFromServer = (): ThunkAction<Promise<void>, State, AxiosInstance, Actions> =>
   async (dispatch, _getState, api) => {
     const { data } = await api.get(APIRoute.Favorite);
+    console.log(data);
+
     dispatch(loadFavorites(data));
   };
 

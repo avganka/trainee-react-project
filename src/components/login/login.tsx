@@ -1,16 +1,27 @@
-import { FormEvent, useRef } from 'react';
-import { Link, useNavigate, useNavigationType} from 'react-router-dom';
+import { FormEvent, MouseEvent, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { Navigate} from 'react-router-dom';
+import { AppRoutes } from '../../const';
 import { loginAction } from '../../store/api-actions';
+import { changeCity } from '../../store/offers-data/offers-data';
 import { store } from '../../store/store';
 import { AuthData } from '../../types/login';
 import Logo from '../logo/logo';
 
 export default function Login():JSX.Element {
+  const dispatch = useDispatch();
+
   const email = useRef<HTMLInputElement | null>(null);
   const password = useRef<HTMLInputElement | null>(null);
 
   const onSubmit = (authData: AuthData) => {
     store.dispatch(loginAction(authData));
+  };
+
+  const onLocationClickHandler = (evt: MouseEvent<HTMLAnchorElement>) => {
+    evt.preventDefault();
+    dispatch(changeCity('Amsterdam'));
+    <Navigate to={AppRoutes.Main}/>;
   };
 
   const onSubmitHandler = (evt: FormEvent<HTMLFormElement>) => {
@@ -56,7 +67,7 @@ export default function Login():JSX.Element {
           </section>
           <section className="locations locations--login locations--current">
             <div className="locations__item">
-              <Link className="locations__item-link" to={'/'}><span>Amsterdam</span></Link>
+              <a className="locations__item-link" href='/' onClick={onLocationClickHandler}><span>Amsterdam</span></a>
             </div>
           </section>
         </div>

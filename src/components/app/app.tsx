@@ -6,20 +6,15 @@ import Login from '../login/login';
 import PageNotFound from '../page-not-found/page-not-found';
 import PrivateRoute from '../private-route/private-route';
 import OfferDetailed from '../offer-detailed/offer-detailed';
-import { connect, ConnectedProps } from 'react-redux';
-import { State } from '../../types/state';
+import { useSelector } from 'react-redux';
 import { Preloader } from '../preloader/preloader';
+import { RootState } from '../../store/root-reducer';
 
-const mapStateToProps = ({authorizationStatus, isDataLoaded}: State) => ({
-  isDataLoaded,
-  authorizationStatus,
-});
+function App(): JSX.Element {
 
-const connector = connect(mapStateToProps);
+  const isDataLoaded = useSelector(({DATA}: RootState) => DATA.isDataLoaded);
+  const authorizationStatus = useSelector(({USER}: RootState) => USER.authorizationStatus);
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-function App({authorizationStatus, isDataLoaded}:PropsFromRedux): JSX.Element {
   if (!isDataLoaded || authorizationStatus === AuthStatus.Unknown) {
     return (
       <Preloader/>
@@ -30,7 +25,6 @@ function App({authorizationStatus, isDataLoaded}:PropsFromRedux): JSX.Element {
     <BrowserRouter>
       <Routes>
         <Route path={AppRoutes.Main} element={<Main/>}/>
-        {/* <Route path={AppRoutes.Login} element={<Login/>}/> */}
         <Route path={AppRoutes.Login} element={
           <PrivateRoute>
             <Login/>
@@ -51,4 +45,4 @@ function App({authorizationStatus, isDataLoaded}:PropsFromRedux): JSX.Element {
 }
 
 export {App};
-export default connector(App);
+export default App;

@@ -19,7 +19,20 @@ export enum APIRoute {
   Comments = '/comments',
 }
 
+export enum Cities {
+  Paris = 'Paris',
+  Amsterdam =  'Amsterdam',
+  Cologne= 'Cologne',
+  Dusseldorf =  'Dusseldorf',
+  Hamburg =  'Hamburg',
+  Brussels =  'Brussels',
+}
 
-export const CITIES_LIST = ['Paris', 'Amsterdam', 'Cologne', 'Dusseldorf', 'Hamburg', 'Brussels'];
+export enum SortingTypes {
+  Popular = 'Popular',
+  LowToHighPrice =  'Price: low to high',
+  HighToLowPrice =  'Price: high to low',
+  TopRated = 'Top rated first',
+}
 
 export const MOUNTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];

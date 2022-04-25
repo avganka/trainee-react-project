@@ -1,40 +1,19 @@
-import { Dispatch, useState } from 'react';
+import { useState } from 'react';
 import Logo from '../logo/logo';
 import OffersList from '../offers-list/offers-list';
 import Map from '../map/map';
-import { connect, ConnectedProps } from 'react-redux';
-import { Actions } from '../../types/action';
-import { State } from '../../types/state';
-import { changeCity} from '../../store/actions';
+import { useSelector } from 'react-redux';
 import { CitiesList } from '../citiesList/citiesList';
-import { loadOffersFromServer } from '../../store/api-actions';
 import PageNotFound from '../page-not-found/page-not-found';
-import { store } from '../../store/store';
 import  Navigation  from '../navigation/navigation';
 import { filterOffers } from '../../utils';
+import { RootState } from '../../store/root-reducer';
 
+function Main(): JSX.Element {
+  const activeCity = useSelector(({DATA}: RootState) => DATA.activeCity);
+  const offers = useSelector(({DATA}: RootState) => DATA.offers);
+  const sortingType = useSelector(({DATA}: RootState) => DATA.sortingType);
 
-const mapStateToProps = ({activeCity, offers, sortingType, authorizationStatus}: State) => ({
-  activeCity,
-  offers,
-  sortingType,
-  authorizationStatus,
-});
-
-const mapDispatchToProps = (dispatch: Dispatch<Actions>) => ({
-  onCityClick(city:string) {
-    dispatch(changeCity(city));
-    store.dispatch(loadOffersFromServer());
-  },
-});
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-// type ConnectedComponentProps = PropsFromRedux & MainPageProps;
-
-
-function Main({activeCity, offers, onCityClick, sortingType, authorizationStatus}: PropsFromRedux): JSX.Element {
   const [activeCard, setActiveCard] = useState(0);
 
   const onListItemHover = (activeOffer:number) => {
@@ -89,7 +68,7 @@ function Main({activeCity, offers, onCityClick, sortingType, authorizationStatus
           <div className="tabs">
             <section className="locations container">
               <ul className="locations__list tabs__list">
-                <CitiesList activeCity={activeCity} onCityClick={onCityClick}/>
+                <CitiesList activeCity={activeCity}/>
               </ul>
             </section>
           </div>
@@ -112,6 +91,6 @@ function Main({activeCity, offers, onCityClick, sortingType, authorizationStatus
 }
 
 export {Main};
-export default connector(Main);
+export default Main;
 
 

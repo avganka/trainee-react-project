@@ -1,48 +1,48 @@
-import { useEffect } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams} from 'react-router-dom';
-import { AuthStatus, MOUNTHS } from '../../const';
-import { loadDetailedOfferFromServer, loadNearbyOffersFromServer, loadReviewsFromServer } from '../../store/api-actions';
+import { AuthStatus } from '../../const';
 import { store } from '../../store/store';
-import { State } from '../../types/state';
 import ReviewForm from '../form-review/form-review';
 import Logo from '../logo/logo';
 import  Navigation  from '../navigation/navigation';
-import PageNotFound from '../page-not-found/page-not-found';
 import { Preloader } from '../preloader/preloader';
 import Map from '../map/map';
+import { RootState } from '../../store/root-reducer';
+import { fetchDetailedOfferAction, fetchReviewsAction } from '../../store/api-actions';
+import Bookmark from '../bookmark/boormark';
+import { restoreDetailedOffer } from '../../store/offers-data/offers-data';
+import Reviews from '../reviews/reviews';
+import NearbyOffers from '../nearby-offers/nearby-offers';
 
+function OfferDetailed():JSX.Element {
+  const dispatch = useDispatch();
+  const detailedOffer = useSelector(({DATA}: RootState) =>DATA.detailedOffer);
+  const nearbyOffers = useSelector(({DATA}: RootState) =>DATA.nearbyOffers);
+  const reviews = useSelector(({DATA}: RootState) =>DATA.reviews);
+  const authorizationStatus = useSelector(({USER}: RootState) => USER.authorizationStatus);
 
-const mapStateToProps = ({detailedOffer, reviews, nearbyOffers, authorizationStatus}: State) => ({
-  detailedOffer,
-  nearbyOffers,
-  reviews,
-  authorizationStatus,
-});
+  const [activeCard, setActiveCard] = useState(0);
 
-const connector = connect(mapStateToProps);
+  const onListItemHover = (activeOffer:number) => {
+    setActiveCard(activeOffer);
+  };
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-function OfferDetailed({detailedOffer, reviews, nearbyOffers, authorizationStatus}:PropsFromRedux):JSX.Element {
   const id = Number(useParams().id);
 
   useEffect(() => {
-    store.dispatch(loadDetailedOfferFromServer(id));
-    store.dispatch(loadReviewsFromServer(id));
-    store.dispatch(loadNearbyOffersFromServer(id));
-  }, [id]);
+    store.dispatch(fetchDetailedOfferAction(id));
+    store.dispatch(fetchReviewsAction(id));
+    return () => {
+      dispatch(restoreDetailedOffer());
+    };
+  }, [id, dispatch]);
 
   if (!detailedOffer) {
-    return <PageNotFound/>;
-  }
-
-  if (!nearbyOffers) {
     return <Preloader/>;
   }
 
-
-  const {title, price, images, rating, description, isPremium, maxAdults, goods, host, type, bedrooms} = detailedOffer;
+  const {title, price, images, rating, description, isPremium, maxAdults, goods, host, type, bedrooms, isFavorite} = detailedOffer;
 
   return (
     <>
@@ -111,12 +111,7 @@ function OfferDetailed({detailedOffer, reviews, nearbyOffers, authorizationStatu
                   <h1 className="property__name">
                     {title}
                   </h1>
-                  <button className="property__bookmark-button button" type="button">
-                    <svg className="property__bookmark-icon" width="31" height="33">
-                      <use xlinkHref="#icon-bookmark"></use>
-                    </svg>
-                    <span className="visually-hidden">To bookmarks</span>
-                  </button>
+                  <Bookmark isFavorite={isFavorite} id={id} detailed/>
                 </div>
                 <div className="property__rating rating">
                   <div className="property__stars rating__stars">
@@ -174,94 +169,34 @@ function OfferDetailed({detailedOffer, reviews, nearbyOffers, authorizationStatu
                   </div>
                 </div>
                 <section className="property__reviews reviews">
-                  <h2 className="reviews__title">Reviews &middot; <span className="reviews__amount">{reviews.length}</span></h2>
-                  <ul className="reviews__list">
-                    {
-                      reviews.map((review) => {
-                        const date = new Date(reviews[0].date);
-                        const result = `${date.getDate()} ${MOUNTHS[date.getMonth()]} ${date.getFullYear()}`;
-                        return (
-                          <li key={review.id} className="reviews__item">
-                            <div className="reviews__user user">
-                              <div className="reviews__avatar-wrapper user__avatar-wrapper">
-                                <img className="reviews__avatar user__avatar" src={review.user.avatarUrl} width="54" height="54" alt="Reviews avatar"/>
-                              </div>
-                              <span className="reviews__user-name">
-                                {review.user.name}
-                              </span>
-                            </div>
-                            <div className="reviews__info">
-                              <div className="reviews__rating rating">
-                                <div className="reviews__stars rating__stars">
-                                  <span style={{width: '80%'}}></span>
-                                  <span className="visually-hidden">{review.rating}</span>
-                                </div>
-                              </div>
-                              <p className="reviews__text">
-                                {review.comment}
-                              </p>
-                              <time className="reviews__time" dateTime={review.date}>{result}</time>
-                            </div>
-                          </li>
-                        );})
-                    }
-
-                  </ul>
+                  {
+                    reviews
+                      ? <Reviews reviews={reviews}/>
+                      : <Preloader/>
+                  }
                   {
                     authorizationStatus === AuthStatus.Auth ? <ReviewForm/> : ''
                   }
-
                 </section>
               </div>
             </div>
             <section className="property__map map">
               {
-                nearbyOffers ? <Map activePoint={id} offers={nearbyOffers}/> : ''
+                nearbyOffers
+                  ? <Map activePoint={activeCard} offers={nearbyOffers}/>
+                  : <Preloader/>
               }
-
             </section>
           </section>
           <div className="container">
             <section className="near-places places">
               <h2 className="near-places__title">Other places in the neighbourhood</h2>
               <div className="near-places__list places__list">
-                {nearbyOffers.map((offer) =>
-                  (
-                    <article key={offer.id} className="near-places__card place-card">
-                      <div className="near-places__image-wrapper place-card__image-wrapper">
-                        <a href="#todo">
-                          <img className="place-card__image" src={offer.previewImage} width="260" height="200" alt="Place img"/>
-                        </a>
-                      </div>
-                      <div className="place-card__info">
-                        <div className="place-card__price-wrapper">
-                          <div className="place-card__price">
-                            <b className="place-card__price-value">&euro;{offer.price}</b>
-                            <span className="place-card__price-text">&#47;&nbsp;night</span>
-                          </div>
-
-                          <button className={offer.isFavorite ? 'place-card__bookmark-button place-card__bookmark-button--active button': 'place-card__bookmark-button button'} type="button">
-                            <svg className="place-card__bookmark-icon" width="18" height="19">
-                              <use xlinkHref="#icon-bookmark"></use>
-                            </svg>
-                            <span className="visually-hidden">In bookmarks</span>
-                          </button>
-
-                        </div>
-                        <div className="place-card__rating rating">
-                          <div className="place-card__stars rating__stars">
-                            <span style={{ width: `${offer.rating * 100 / 5}%` }}></span>
-                            <span className="visually-hidden">Rating</span>
-                          </div>
-                        </div>
-                        <h2 className="place-card__name">
-                          <a href="#todo">{offer.title}</a>
-                        </h2>
-                        <p className="place-card__type">{offer.type[0].toUpperCase()+offer.type.slice(1)}</p>
-                      </div>
-                    </article>
-                  ),
-                )}
+                {
+                  nearbyOffers
+                    ? <NearbyOffers offers={nearbyOffers} onListItemHover={onListItemHover}/>
+                    : <Preloader/>
+                }
               </div>
             </section>
           </div>
@@ -272,5 +207,5 @@ function OfferDetailed({detailedOffer, reviews, nearbyOffers, authorizationStatu
 }
 
 export {OfferDetailed};
-export default connector(OfferDetailed);
+export default OfferDetailed;
 

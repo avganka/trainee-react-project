@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { AppRoutes } from '../../const';
 import { Offer } from '../../types/offers';
+import Bookmark from '../bookmark/boormark';
 
 type OfferProps = {
   offer: Offer
@@ -36,19 +37,7 @@ export default function OfferCard ({offer}: OfferProps):JSX.Element {
                             &#47;&nbsp;night
             </span>
           </div>
-          <button
-            className={isFavorite ? 'place-card__bookmark-button place-card__bookmark-button--active button': 'place-card__bookmark-button button'}
-            type="button"
-          >
-            <svg
-              className="place-card__bookmark-icon"
-              width="18"
-              height="19"
-            >
-              <use xlinkHref="#icon-bookmark"></use>
-            </svg>
-            <span className="visually-hidden">To bookmarks</span>
-          </button>
+          <Bookmark isFavorite={isFavorite} id={id}/>
         </div>
         <div className="place-card__rating rating">
           <div className="place-card__stars rating__stars">

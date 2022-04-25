@@ -1,16 +1,15 @@
-import { SORTING_TYPES } from './components/sort/sort';
+import { Cities, SortingTypes } from './const';
 import { Offer } from './types/offers';
 
-export const sortOffers = (offers:  Offer[], typeSort:  string, city:  string) => {
-
+export const sortOffers = (offers:  Offer[], typeSort: `${SortingTypes}`, city:  `${Cities}`) => {
   switch (typeSort) {
-    case SORTING_TYPES[0]:
+    case SortingTypes.Popular:
       return offers;
-    case SORTING_TYPES[1]:
+    case SortingTypes.LowToHighPrice:
       return offers.slice().sort((a, b) => a.price - b.price);
-    case SORTING_TYPES[2]:
+    case SortingTypes.HighToLowPrice:
       return offers.slice().sort((a, b) => b.price - a.price);
-    case SORTING_TYPES[3]:
+    case SortingTypes.TopRated:
       return offers.slice().sort((a, b) => b.rating - a.rating);
     default:
       return offers;

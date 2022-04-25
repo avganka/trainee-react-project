@@ -1,26 +1,14 @@
-import { Dispatch, useState } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import { sorting } from '../../store/actions';
-import { Actions } from '../../types/action';
-import { State } from '../../types/state';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { SortingTypes } from '../../const';
+import { sortOffers } from '../../store/offers-data/offers-data';
+import { RootState } from '../../store/root-reducer';
 
-export const SORTING_TYPES = ['Popular', 'Price: low to high', 'Price: high to low' ,'Top rated first'];
 
-const mapStateToProps = ({sortingType}: State) => ({
-  sortingType,
-});
+function Sort():JSX.Element {
+  const sortingType = useSelector(({DATA}: RootState) => DATA.sortingType);
+  const dispatch = useDispatch();
 
-const mapDispatchToProps = (dispatch: Dispatch<Actions>) => ({
-  onSortOptionClick (sortingOption: string) {
-    dispatch(sorting(sortingOption));
-  },
-});
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-function Sort({onSortOptionClick, sortingType}:PropsFromRedux):JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleSortBlock = () => {
@@ -37,7 +25,7 @@ function Sort({onSortOptionClick, sortingType}:PropsFromRedux):JSX.Element {
         </svg>
       </span>
       <ul className={isOpen ? 'places__options places__options--custom places__options--opened' : 'places__options places__options--custom '}>
-        {SORTING_TYPES.map((sortingOption) => (
+        {Object.values(SortingTypes).map((sortingOption) => (
           <li
             key={sortingOption}
             className={sortingOption === sortingType ? 'places__option places__option--active':'places__option'}
@@ -45,7 +33,7 @@ function Sort({onSortOptionClick, sortingType}:PropsFromRedux):JSX.Element {
             data-sort-type={sortingOption}
             onClick={() => {
               setIsOpen(false);
-              return onSortOptionClick(sortingOption);
+              return dispatch(sortOffers(sortingOption as `${SortingTypes}`));
             }}
           >
             {sortingOption}
@@ -57,4 +45,4 @@ function Sort({onSortOptionClick, sortingType}:PropsFromRedux):JSX.Element {
 }
 
 export {Sort};
-export default connector(Sort);
+export default Sort;

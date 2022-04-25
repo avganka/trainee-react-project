@@ -2,11 +2,15 @@ import axios from 'axios';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { APIRoute, AppRoutes } from '../../const';
-import { api } from '../../store/store';
+import { fetchReviewsAction, postReviewAction } from '../../store/api-actions';
+import { api, store } from '../../store/store';
+import { Review } from '../../types/reviews';
+
+export type reviewFormData = Pick<Review, 'comment'|'rating'>;
 
 export default function ReviewForm ():JSX.Element {
 
-  const [review, setReview] = useState({
+  const [review, setReview] = useState<reviewFormData>({
     comment: '',
     rating: 0,
   });
@@ -14,10 +18,8 @@ export default function ReviewForm ():JSX.Element {
 
   const onSubmitHandler = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    api.post(`${APIRoute.Comments}/${id}`, review)
-      .catch((error) => {
-        throw new Error(`Не удалось отправить комментарий. Ошибка: ${error}`);
-      });
+    store.dispatch(postReviewAction(id, review));
+    // store.dispatch(fetchReviewsAction(id));
   };
 
   return (

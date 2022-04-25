@@ -1,3 +1,4 @@
+import { Cities, SortingTypes } from '../../const';
 import { Offer } from '../../types/offers';
 import { sortOffers } from '../../utils';
 import OfferCard from '../offer-card/offer-card';
@@ -6,8 +7,8 @@ import Sort from '../sort/sort';
 type RoomListProps = {
   offers: Offer[];
   onListItemHover: (activeOffer: number) => void,
-  activeCity: string,
-  sortingType: string,
+  activeCity: `${Cities}`,
+  sortingType: `${SortingTypes}`,
 }
 
 export default function OffersList ({offers, onListItemHover, activeCity, sortingType}:RoomListProps) {

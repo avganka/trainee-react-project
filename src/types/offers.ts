@@ -4,7 +4,7 @@ export type Offer = {
   description: string,
   goods: string[],
   host: Host,
-  id: number,
+  id: Id,
   images: string[],
   isFavorite: boolean,
   isPremium: boolean,
@@ -25,7 +25,7 @@ export type City = {
 
 export type Host = {
   avatarUrl: string,
-  id: number,
+  id: Id,
   isPro: boolean,
   name: string,
 }
@@ -35,3 +35,5 @@ export type Location = {
   longitude: number,
   zoom: number
 }
+
+export type Id = number;

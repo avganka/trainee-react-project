@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { AppRoutes } from '../../const';
 import { Offer } from '../../types/offers';
@@ -7,7 +8,7 @@ type OfferProps = {
   offer: Offer
 }
 
-export default function OfferCard ({offer}: OfferProps):JSX.Element {
+function OfferCard ({offer}: OfferProps):JSX.Element {
   const { id, title, isPremium, price, rating, type, previewImage, isFavorite} = offer;
 
   return (
@@ -53,3 +54,5 @@ export default function OfferCard ({offer}: OfferProps):JSX.Element {
     </>
   );
 }
+
+export default memo(OfferCard);

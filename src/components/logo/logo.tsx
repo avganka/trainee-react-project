@@ -1,7 +1,8 @@
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { AppRoutes } from '../../const';
 
-export default function Logo() {
+function Logo() {
   return (
     <Link className="header__logo-link header__logo-link--active" to={AppRoutes.Main}>
       <img
@@ -14,3 +15,5 @@ export default function Logo() {
     </Link>
   );
 }
+
+export default memo(Logo);

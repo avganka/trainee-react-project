@@ -8,7 +8,7 @@ import { store } from '../../store/store';
 import { AuthData } from '../../types/login';
 import Logo from '../logo/logo';
 
-export default function Login():JSX.Element {
+function Login():JSX.Element {
   const dispatch = useDispatch();
 
   const email = useRef<HTMLInputElement | null>(null);
@@ -76,3 +76,4 @@ export default function Login():JSX.Element {
   );
 }
 
+export default Login;

@@ -3,20 +3,20 @@ import Logo from '../logo/logo';
 import OffersList from '../offers-list/offers-list';
 import Map from '../map/map';
 import { useSelector } from 'react-redux';
-import { CitiesList } from '../citiesList/citiesList';
 import PageNotFound from '../page-not-found/page-not-found';
 import  Navigation  from '../navigation/navigation';
 import { filterOffers } from '../../utils';
 import { RootState } from '../../store/root-reducer';
+import CitiesList from '../cities-list/cities-list';
+import { Id } from '../../types/offers';
 
 function Main(): JSX.Element {
   const activeCity = useSelector(({DATA}: RootState) => DATA.activeCity);
   const offers = useSelector(({DATA}: RootState) => DATA.offers);
-  const sortingType = useSelector(({DATA}: RootState) => DATA.sortingType);
 
   const [activeCard, setActiveCard] = useState(0);
 
-  const onListItemHover = (activeOffer:number) => {
+  const onListItemHover = (activeOffer: Id) => {
     setActiveCard(activeOffer);
   };
 
@@ -75,7 +75,7 @@ function Main(): JSX.Element {
           <div className="cities">
             <div className="cities__places-container container">
               <section className="cities__places places">
-                <OffersList offers={filteredOffers} activeCity={activeCity} onListItemHover={onListItemHover} sortingType={sortingType}/>
+                <OffersList offers={filteredOffers} onListItemHover={onListItemHover}/>
               </section>
               <div className="cities__right-section">
                 <section className="cities__map map">

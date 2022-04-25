@@ -1,29 +1,34 @@
-import { Cities, SortingTypes } from '../../const';
-import { Offer } from '../../types/offers';
+import { memo, useCallback, useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/root-reducer';
+import { Id, Offer } from '../../types/offers';
 import { sortOffers } from '../../utils';
 import OfferCard from '../offer-card/offer-card';
 import Sort from '../sort/sort';
 
 type RoomListProps = {
   offers: Offer[];
-  onListItemHover: (activeOffer: number) => void,
-  activeCity: `${Cities}`,
-  sortingType: `${SortingTypes}`,
+  onListItemHover: (id: Id) => void,
 }
 
-export default function OffersList ({offers, onListItemHover, activeCity, sortingType}:RoomListProps) {
+function OffersList ({offers, onListItemHover}:RoomListProps) {
 
-  const sortedOffers = sortOffers(offers, sortingType, activeCity);
+  const activeCity = useSelector(({DATA}: RootState) => DATA.activeCity);
+  const sortingType = useSelector(({DATA}: RootState) => DATA.sortingType);
+
+  // const sortedOffers = sortOffers(offers, sortingType, activeCity);
+  const sortedOffersMemoized = useMemo(() => sortOffers(offers, sortingType, activeCity), [offers, sortingType, activeCity]);
+  const onListItemHoverMemoized = useCallback(onListItemHover, [onListItemHover]);
 
   return (
     <>
       <h2 className="visually-hidden">Places</h2>
-      <b className="places__found">{sortedOffers.length} places to stay in {activeCity}</b>
+      <b className="places__found">{sortedOffersMemoized.length} places to stay in {activeCity}</b>
       <Sort/>
       <div className="cities__places-list places__list tabs__content">
         {
-          sortedOffers.map((offer) => (
-            <article className="cities__place-card place-card" key={offer.id} onMouseEnter={() => onListItemHover(offer.id)}>
+          sortedOffersMemoized.map((offer) => (
+            <article className="cities__place-card place-card" key={offer.id} onMouseEnter={() => onListItemHoverMemoized(offer.id)}>
               <OfferCard
                 offer={offer}
               />
@@ -34,3 +39,5 @@ export default function OffersList ({offers, onListItemHover, activeCity, sortin
     </>
   );
 }
+
+export default memo(OffersList);

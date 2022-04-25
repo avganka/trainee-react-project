@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { AppRoutes, AuthStatus } from '../../const';
@@ -5,13 +6,6 @@ import { getEmail } from '../../services/email';
 import { logoutAction } from '../../store/api-actions';
 import { RootState } from '../../store/root-reducer';
 import { store } from '../../store/store';
-
-// const mapStateToProps = ({authorizationStatus}: State) => ({
-//   authorizationStatus,
-// });
-
-// const connector = connect(mapStateToProps);
-// type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function Navigation ():JSX.Element {
 
@@ -73,4 +67,4 @@ function Navigation ():JSX.Element {
 }
 
 export {Navigation};
-export default Navigation;
+export default memo(Navigation);

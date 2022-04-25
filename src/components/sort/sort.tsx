@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SortingTypes } from '../../const';
 import { sortOffers } from '../../store/offers-data/offers-data';
@@ -45,4 +45,4 @@ function Sort():JSX.Element {
 }
 
 export {Sort};
-export default Sort;
+export default memo(Sort);

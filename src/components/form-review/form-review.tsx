@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, memo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { APIRoute, AppRoutes } from '../../const';
 import { fetchReviewsAction, postReviewAction } from '../../store/api-actions';
@@ -8,7 +8,7 @@ import { Review } from '../../types/reviews';
 
 export type reviewFormData = Pick<Review, 'comment'|'rating'>;
 
-export default function ReviewForm ():JSX.Element {
+function ReviewForm ():JSX.Element {
 
   const [review, setReview] = useState<reviewFormData>({
     comment: '',
@@ -91,3 +91,5 @@ export default function ReviewForm ():JSX.Element {
     </form>
   );
 }
+
+export default  memo(ReviewForm);

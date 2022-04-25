@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { MOUNTHS } from '../../const';
 import { Review } from '../../types/reviews';
 
@@ -45,4 +46,4 @@ function Reviews ({reviews}: ReviewsProps):JSX.Element {
   );
 }
 
-export default Reviews;
+export default memo(Reviews);

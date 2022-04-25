@@ -1,5 +1,5 @@
 import { Icon, Marker } from 'leaflet';
-import { useEffect, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
 import useMap from '../../hooks/useMap';
 import 'leaflet/dist/leaflet.css';
 import { Offer } from '../../types/offers';
@@ -48,5 +48,5 @@ function Map ({activePoint, offers}:MapProps):JSX.Element {
   return <div style = {{height: '100%'}} ref={mapRef}></div>;
 }
 
-export default Map;
+export default memo(Map);
 

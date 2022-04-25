@@ -1,6 +1,6 @@
 function Preloader ():JSX.Element {
   return (
-    <div className="page page--gray page--main">
+    <div className="">
       <div className="container">
         <p>Loading....</p>
       </div>

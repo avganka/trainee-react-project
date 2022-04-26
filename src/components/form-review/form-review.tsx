@@ -1,9 +1,7 @@
-import axios from 'axios';
 import { ChangeEvent, FormEvent, memo, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { APIRoute, AppRoutes } from '../../const';
-import { fetchReviewsAction, postReviewAction } from '../../store/api-actions';
-import { api, store } from '../../store/store';
+import { postReviewAction } from '../../store/api-actions';
+import { store } from '../../store/store';
 import { Review } from '../../types/reviews';
 
 export type reviewFormData = Pick<Review, 'comment'|'rating'>;

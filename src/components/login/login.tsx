@@ -1,6 +1,6 @@
 import { FormEvent, MouseEvent, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { Navigate} from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 import { AppRoutes } from '../../const';
 import { loginAction } from '../../store/api-actions';
 import { changeCity } from '../../store/offers-data/offers-data';
@@ -10,6 +10,7 @@ import Logo from '../logo/logo';
 
 function Login():JSX.Element {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const email = useRef<HTMLInputElement | null>(null);
   const password = useRef<HTMLInputElement | null>(null);
@@ -21,14 +22,12 @@ function Login():JSX.Element {
   const onLocationClickHandler = (evt: MouseEvent<HTMLAnchorElement>) => {
     evt.preventDefault();
     dispatch(changeCity('Amsterdam'));
-    <Navigate to={AppRoutes.Main}/>;
+    navigate(AppRoutes.Main);
   };
 
   const onSubmitHandler = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-
     if (email.current !== null && password.current !== null) {
-
       return onSubmit({
         email: email.current.value,
         password: email.current.value,

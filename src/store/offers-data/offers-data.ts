@@ -11,8 +11,8 @@ const initialState: OffersData = {
   favoriteOffers: [],
   reviews: [],
   isDataLoaded: false,
-  activeCity: Cities.Paris,
   sortingType: SortingTypes.Popular,
+  activeCity: Cities.Paris,
 };
 
 const offersData = createSlice({
@@ -73,5 +73,5 @@ const offersData = createSlice({
   },
 });
 
-export const {fetchOffers, fetchDetailedOffer, fetchFavorites, fetchReviews, fetchNearbyOffers, changeFavoriteOffer, changeOffer, restoreDetailedOffer, changeDetailedOffer, changeNearbyOffers, changeCity, sortOffers} = offersData.actions;
+export const {fetchOffers, fetchDetailedOffer, fetchFavorites, fetchReviews, fetchNearbyOffers, changeFavoriteOffer, changeOffer, restoreDetailedOffer, changeDetailedOffer, changeNearbyOffers, sortOffers, changeCity} = offersData.actions;
 export default offersData;

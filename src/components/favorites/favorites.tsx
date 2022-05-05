@@ -2,14 +2,14 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Cities } from '../../const';
 import { fetchFavoritesAction } from '../../store/api-actions';
-import { RootState } from '../../store/root-reducer';
+import { getFavoriteOffers } from '../../store/selectors/selectros';
 import { store } from '../../store/store';
 import FavoriteCard from '../favorite-card/favorite-card';
 import Logo from '../logo/logo';
 import Navigation from '../navigation/navigation';
 
 function Favorites():JSX.Element {
-  const favoriteOffers = useSelector(({DATA}: RootState) => DATA.favoriteOffers );
+  const favoriteOffers = useSelector(getFavoriteOffers);
 
   useEffect(() => {
     store.dispatch(fetchFavoritesAction());

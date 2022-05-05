@@ -2,11 +2,10 @@ import { memo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SortingTypes } from '../../const';
 import { sortOffers } from '../../store/offers-data/offers-data';
-import { RootState } from '../../store/root-reducer';
-
+import { getSortingType } from '../../store/selectors/selectros';
 
 function Sort():JSX.Element {
-  const sortingType = useSelector(({DATA}: RootState) => DATA.sortingType);
+  const sortingType = useSelector(getSortingType);
   const dispatch = useDispatch();
 
   const [isOpen, setIsOpen] = useState(false);

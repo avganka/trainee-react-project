@@ -15,5 +15,3 @@ export const sortOffers = (offers:  Offer[], typeSort: `${SortingTypes}`, city: 
       return offers;
   }
 };
-
-export const filterOffers = (offers:  Offer[], city:  string):Offer[] => offers.filter((offer) => offer.city.name === city);

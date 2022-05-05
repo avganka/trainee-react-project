@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom';
 import { AppRoutes, AuthStatus } from '../../const';
 import { getEmail } from '../../services/email';
 import { logoutAction } from '../../store/api-actions';
-import { RootState } from '../../store/root-reducer';
+import { getAuthStatus } from '../../store/selectors/selectros';
 import { store } from '../../store/store';
 
 function Navigation ():JSX.Element {
 
-  const authorizationStatus = useSelector(({USER}: RootState) => USER.authorizationStatus);
+  const authorizationStatus = useSelector(getAuthStatus);
 
   const logoutHandler = () => {
     store.dispatch(logoutAction());

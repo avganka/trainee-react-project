@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthStatus } from '../../const';
 import { postFavoriteOfferAction } from '../../store/api-actions';
-import { RootState } from '../../store/root-reducer';
+import { getAuthStatus } from '../../store/selectors/selectros';
 import { Offer } from '../../types/offers';
 
 type BookmarkProps = Pick<Offer, 'isFavorite'|'id'> & {
@@ -10,7 +10,7 @@ type BookmarkProps = Pick<Offer, 'isFavorite'|'id'> & {
 }
 
 function Bookmark ({isFavorite, id, detailed = false}: BookmarkProps):JSX.Element {
-  const authorizationStatus = useSelector(({USER}:RootState) =>USER.authorizationStatus);
+  const authorizationStatus = useSelector(getAuthStatus);
   const dispatch = useDispatch();
 
   const onFavoriteClickHandler = () => {

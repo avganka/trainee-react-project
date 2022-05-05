@@ -1,18 +1,20 @@
 import { memo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Cities } from '../../const';
+import { fetchOffersAction } from '../../store/api-actions';
+import { changeCity } from '../../store/offers-data/offers-data';
+import { getActiveCity } from '../../store/selectors/selectros';
+import { store } from '../../store/store';
 
-type CityListProps = {
-  activeCity: `${Cities}`,
-  onCityChangeHandler: (city: `${Cities}`) => void;
-}
 
-function CitiesList({activeCity, onCityChangeHandler}:CityListProps):JSX.Element {
-  // const dispatch = useDispatch();
+function CitiesList():JSX.Element {
+  const activeCity = useSelector(getActiveCity);
+  const dispatch = useDispatch();
 
-  // const onCityClickHandler = (city: string) => {
-  //   dispatch(changeCity(city as `${Cities}`));
-  //   store.dispatch(fetchOffersAction());
-  // };
+  const onCityClickHandler = (city: string) => {
+    dispatch(changeCity(city as `${Cities}`));
+    store.dispatch(fetchOffersAction());
+  };
 
   return (
     <>
@@ -21,7 +23,7 @@ function CitiesList({activeCity, onCityChangeHandler}:CityListProps):JSX.Element
           <a className={city === activeCity ? 'locations__item-link tabs__item tabs__item--active' : 'locations__item-link tabs__item'} href={'/'}
             onClick={(evt) => {
               evt.preventDefault();
-              onCityChangeHandler(city as `${Cities}`);
+              onCityClickHandler(city as `${Cities}`);
             }}
           >
             <span>{city}</span>

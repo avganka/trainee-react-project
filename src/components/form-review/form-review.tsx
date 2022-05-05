@@ -17,7 +17,6 @@ function ReviewForm ():JSX.Element {
   const onSubmitHandler = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
     store.dispatch(postReviewAction(id, review));
-    // store.dispatch(fetchReviewsAction(id));
   };
 
   return (

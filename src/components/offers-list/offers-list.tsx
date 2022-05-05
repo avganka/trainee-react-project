@@ -1,6 +1,6 @@
 import { memo, useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../store/root-reducer';
+import { getActiveCity, getSortingType } from '../../store/selectors/selectros';
 import { Id, Offer } from '../../types/offers';
 import { sortOffers } from '../../utils';
 import OfferCard from '../offer-card/offer-card';
@@ -13,10 +13,9 @@ type RoomListProps = {
 
 function OffersList ({offers, onListItemHover}:RoomListProps) {
 
-  const activeCity = useSelector(({DATA}: RootState) => DATA.activeCity);
-  const sortingType = useSelector(({DATA}: RootState) => DATA.sortingType);
+  const activeCity = useSelector(getActiveCity);
+  const sortingType = useSelector(getSortingType);
 
-  // const sortedOffers = sortOffers(offers, sortingType, activeCity);
   const sortedOffersMemoized = useMemo(() => sortOffers(offers, sortingType, activeCity), [offers, sortingType, activeCity]);
   const onListItemHoverMemoized = useCallback(onListItemHover, [onListItemHover]);
 

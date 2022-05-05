@@ -11,8 +11,8 @@ export type OffersData = {
   favoriteOffers: Offer[],
   reviews: Review[],
   isDataLoaded: boolean,
-  activeCity: `${Cities}`,
   sortingType: `${SortingTypes}`,
+  activeCity: `${Cities}`
 }
 
 export type UserProcess = {

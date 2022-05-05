@@ -8,19 +8,19 @@ import Logo from '../logo/logo';
 import  Navigation  from '../navigation/navigation';
 import { Preloader } from '../preloader/preloader';
 import Map from '../map/map';
-import { RootState } from '../../store/root-reducer';
 import { fetchDetailedOfferAction, fetchReviewsAction } from '../../store/api-actions';
 import Bookmark from '../bookmark/boormark';
 import { restoreDetailedOffer } from '../../store/offers-data/offers-data';
 import Reviews from '../reviews/reviews';
 import NearbyOffers from '../nearby-offers/nearby-offers';
+import { getAuthStatus, getDetailedOffer, getNearbyOffers, getReviews } from '../../store/selectors/selectros';
 
 function OfferDetailed():JSX.Element {
   const dispatch = useDispatch();
-  const detailedOffer = useSelector(({DATA}: RootState) =>DATA.detailedOffer);
-  const nearbyOffers = useSelector(({DATA}: RootState) =>DATA.nearbyOffers);
-  const reviews = useSelector(({DATA}: RootState) =>DATA.reviews);
-  const authorizationStatus = useSelector(({USER}: RootState) => USER.authorizationStatus);
+  const detailedOffer = useSelector(getDetailedOffer);
+  const nearbyOffers = useSelector(getNearbyOffers);
+  const reviews = useSelector(getReviews);
+  const authorizationStatus = useSelector(getAuthStatus);
 
   const [activeCard, setActiveCard] = useState(0);
 

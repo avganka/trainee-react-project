@@ -5,26 +5,12 @@ import Map from '../map/map';
 import { useSelector } from 'react-redux';
 import PageNotFound from '../page-not-found/page-not-found';
 import  Navigation  from '../navigation/navigation';
-import { filterOffers } from '../../utils';
-import { RootState } from '../../store/root-reducer';
 import CitiesList from '../cities-list/cities-list';
 import { Id } from '../../types/offers';
-import { Cities } from '../../const';
-import { store } from '../../store/store';
-import { fetchOffersAction } from '../../store/api-actions';
+import { selectOffers } from '../../store/selectors/selectros';
 
 function Main(): JSX.Element {
-
-  const [activeCity, setActiveCity] = useState<`${Cities}`>(Cities.Paris);
-
-  const onCityChangeHandler = (city: `${Cities}`) => {
-    setActiveCity(city);
-    store.dispatch(fetchOffersAction());
-
-  };
-
-  // const activeCity = useSelector(({DATA}: RootState) => DATA.activeCity);
-  const offers = useSelector(({DATA}: RootState) => DATA.offers);
+  const filteredOffers = useSelector(selectOffers);
 
   const [activeCard, setActiveCard] = useState(0);
 
@@ -32,10 +18,9 @@ function Main(): JSX.Element {
     setActiveCard(activeOffer);
   };
 
-  if (!offers) {
+  if (!filteredOffers) {
     return <PageNotFound/>;
   }
-  const filteredOffers = filterOffers(offers, activeCity);
 
   return (
     <>
@@ -80,7 +65,7 @@ function Main(): JSX.Element {
           <div className="tabs">
             <section className="locations container">
               <ul className="locations__list tabs__list">
-                <CitiesList activeCity={activeCity} onCityChangeHandler={onCityChangeHandler}/>
+                <CitiesList/>
               </ul>
             </section>
           </div>

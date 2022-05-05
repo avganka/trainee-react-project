@@ -9,9 +9,21 @@ import { filterOffers } from '../../utils';
 import { RootState } from '../../store/root-reducer';
 import CitiesList from '../cities-list/cities-list';
 import { Id } from '../../types/offers';
+import { Cities } from '../../const';
+import { store } from '../../store/store';
+import { fetchOffersAction } from '../../store/api-actions';
 
 function Main(): JSX.Element {
-  const activeCity = useSelector(({DATA}: RootState) => DATA.activeCity);
+
+  const [activeCity, setActiveCity] = useState<`${Cities}`>(Cities.Paris);
+
+  const onCityChangeHandler = (city: `${Cities}`) => {
+    setActiveCity(city);
+    store.dispatch(fetchOffersAction());
+
+  };
+
+  // const activeCity = useSelector(({DATA}: RootState) => DATA.activeCity);
   const offers = useSelector(({DATA}: RootState) => DATA.offers);
 
   const [activeCard, setActiveCard] = useState(0);
@@ -68,7 +80,7 @@ function Main(): JSX.Element {
           <div className="tabs">
             <section className="locations container">
               <ul className="locations__list tabs__list">
-                <CitiesList activeCity={activeCity}/>
+                <CitiesList activeCity={activeCity} onCityChangeHandler={onCityChangeHandler}/>
               </ul>
             </section>
           </div>

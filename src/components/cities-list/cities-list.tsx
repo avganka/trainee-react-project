@@ -1,21 +1,18 @@
 import { memo } from 'react';
-import { useDispatch } from 'react-redux';
 import { Cities } from '../../const';
-import { fetchOffersAction } from '../../store/api-actions';
-import { changeCity } from '../../store/offers-data/offers-data';
-import { store } from '../../store/store';
 
 type CityListProps = {
-  activeCity: `${Cities}`
+  activeCity: `${Cities}`,
+  onCityChangeHandler: (city: `${Cities}`) => void;
 }
 
-function CitiesList({activeCity}:CityListProps):JSX.Element {
-  const dispatch = useDispatch();
+function CitiesList({activeCity, onCityChangeHandler}:CityListProps):JSX.Element {
+  // const dispatch = useDispatch();
 
-  const onCityClickHandler = (city: string) => {
-    dispatch(changeCity(city as `${Cities}`));
-    store.dispatch(fetchOffersAction());
-  };
+  // const onCityClickHandler = (city: string) => {
+  //   dispatch(changeCity(city as `${Cities}`));
+  //   store.dispatch(fetchOffersAction());
+  // };
 
   return (
     <>
@@ -24,7 +21,7 @@ function CitiesList({activeCity}:CityListProps):JSX.Element {
           <a className={city === activeCity ? 'locations__item-link tabs__item tabs__item--active' : 'locations__item-link tabs__item'} href={'/'}
             onClick={(evt) => {
               evt.preventDefault();
-              onCityClickHandler(city);
+              onCityChangeHandler(city as `${Cities}`);
             }}
           >
             <span>{city}</span>
